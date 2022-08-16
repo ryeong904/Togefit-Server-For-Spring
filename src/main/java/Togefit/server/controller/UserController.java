@@ -10,7 +10,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("api/user")
@@ -56,5 +59,15 @@ public class UserController {
         response.addCookie(cookie);
         resp.setResult("로그아웃 되었습니다.");
         return resp;
+    }
+
+    @GetMapping("/info/{userId}")
+    @ResponseBody
+    public User getUserInfo(@PathVariable String userId){
+        Optional<User> findUser = userService.findOne(userId);
+        if(findUser.isEmpty()){
+            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+        }
+        return findUser.get();
     }
 }
