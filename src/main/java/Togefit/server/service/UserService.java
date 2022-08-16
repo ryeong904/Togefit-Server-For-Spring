@@ -1,18 +1,26 @@
 package Togefit.server.service;
 
 import Togefit.server.domain.User;
-import Togefit.server.model.UserToken;
 import Togefit.server.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.InvalidParameterException;
+import java.util.Date;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService {
+    @Value("${JWT_SECRET_KEY}")
+    String JWT_SECRET_KEY;
+
     private final UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -41,11 +49,33 @@ public class UserService {
         return userRepository.findByUserId(userId);
     }
 
-//    public UserToken getUserToken(String userId, String password){
-//        if(findOne(userId) == null){
-//            throw new IllegalStateException("해당 유저를 찾지 못했습니다.");
-//        }
-//
-//
-//    }
+    public String getUserToken(String userId, String password){
+        Optional<User> findUser = this.findOne(userId);
+
+        if(findUser.isEmpty()){
+            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+        }
+
+        boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
+
+        if(isPasswordCorrect == false){
+            throw new InvalidParameterException("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요.");
+        }
+
+        String nickname = findUser.get().getNickname();
+        String accessToken = makeJwtToken(userId, nickname);
+
+        return accessToken;
+    }
+
+    private String makeJwtToken(String userId, String nickname) {
+        Date now = new Date();
+        return Jwts.builder()
+                .setHeaderParam(Header.TYPE, Header.JWT_TYPE)
+                .setIssuedAt(now)
+                .claim("userId", userId)
+                .claim("nickname", nickname)
+                .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
+                .compact();
+    }
 }
