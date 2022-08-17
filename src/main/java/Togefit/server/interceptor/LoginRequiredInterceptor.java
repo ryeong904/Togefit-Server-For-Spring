@@ -4,11 +4,13 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Optional;
@@ -19,20 +21,23 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
     String JWT_SECRET_KEY;
 
     @Override
+    @ResponseBody
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
+        String token = extractToken(request.getCookies()).trim();
 
-        request.getCookies();
-
-        String token = extractToken(request.getCookies());
-
-        // 토큰이 없거나 유효하지 않으면 false 리턴
-        if(token == null || token == ""){
-            System.out.println("token is null");
+        // 토큰이 없으면 false 리턴
+        if(token.equals("")){
+            setResonse(response);
             return false;
         }
 
-        // 유효성 검사 코드 추가해야함
-        Claims claims = getClaims(token);
+        // 유효성 검사
+        Claims claims = getClaims(response, token);
+        if(claims == null){
+            setResonse(response);
+            return false;
+        }
+
         String userId = (String) claims.get("userId");
         String nickname = (String) claims.get("nickname");
         request.setAttribute("userId", userId);
@@ -40,11 +45,16 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
         return true;
     }
 
-    private Claims getClaims(String token){
-        return Jwts.parser()
-                .setSigningKey(JWT_SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody();
+    private Claims getClaims(HttpServletResponse response, String token){
+        try{
+            return Jwts.parser()
+                    .setSigningKey(JWT_SECRET_KEY)
+                    .parseClaimsJws(token)
+                    .getBody();
+        }catch(Exception e){
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private String extractToken(Cookie[] cookies){
@@ -52,7 +62,14 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
                 .filter(c -> c.getName().equals("token"))
                 .findFirst()
                 .map(Cookie::getValue)
-                .orElse(null)
-                .trim();
+                .orElse(null);
+    }
+
+    private void setResonse(HttpServletResponse response) throws IOException {
+        response.setStatus(401);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter()
+                .write("{\"result\":\"forbidden-approach\",\"reason\":\"로그인한 유저만 사용할 수 있는 서비스입니다.\"}");
     }
 }
