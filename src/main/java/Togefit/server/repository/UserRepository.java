@@ -30,8 +30,7 @@ public class UserRepository implements UserRepositoryInterface{
 
     @Override
     public void delete(User user) {
-
+        em.remove(user);
     }
-
 
 }

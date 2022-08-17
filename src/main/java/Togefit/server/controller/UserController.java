@@ -15,11 +15,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@Controller
 @RequestMapping("api/user")
+@RestController
 public class UserController {
 
-    private UserService userService;
+    final private UserService userService;
 
     @Autowired
     public UserController(UserService userService){
@@ -27,16 +27,14 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    @ResponseBody
     public String create(@RequestBody User newUser){
         return userService.join(newUser);
     }
 
     @PostMapping("/login")
-    @ResponseBody
     public UserLoginResponse login(@RequestBody UserInfo userInfo, HttpServletResponse response){
         UserLoginResponse resp = new UserLoginResponse();
-        String userId = userInfo.getUserId();
+        String userId = userInfo.getId();
         String password = userInfo.getPassword();
 
         String userToken = userService.getUserToken(userId, password);
@@ -50,19 +48,14 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    @ResponseBody
     public OperationResponse logout(HttpServletResponse response){
         OperationResponse resp = new OperationResponse();
-
-        Cookie cookie = new Cookie("token", "");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        deleteCookie(response);
         resp.setResult("로그아웃 되었습니다.");
         return resp;
     }
 
     @GetMapping("/info/{userId}")
-    @ResponseBody
     public User getUserInfo(@PathVariable String userId){
         Optional<User> findUser = userService.findOne(userId);
         if(findUser.isEmpty()){
@@ -70,4 +63,25 @@ public class UserController {
         }
         return findUser.get();
     }
+
+    @PostMapping("/unregister")
+    public OperationResponse userUnregister(@RequestBody UserInfo userInfo, HttpServletResponse response){
+        OperationResponse resp = new OperationResponse();
+
+        String userId = userInfo.getId();
+        String password = userInfo.getPassword();
+
+        userService.deleteUser(userId, password);
+        deleteCookie(response);
+
+        resp.setResult("정상적으로 회원 탈퇴 되었습니다.");
+        return resp;
+    }
+
+    private void deleteCookie(HttpServletResponse response){
+        Cookie cookie = new Cookie("token", "");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+    }
+
 }

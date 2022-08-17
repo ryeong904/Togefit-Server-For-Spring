@@ -58,7 +58,7 @@ public class UserService {
 
         boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
 
-        if(isPasswordCorrect == false){
+        if(!isPasswordCorrect){
             throw new InvalidParameterException("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요.");
         }
 
@@ -77,5 +77,21 @@ public class UserService {
                 .claim("nickname", nickname)
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
+    }
+
+    public void deleteUser(String userId, String password){
+        Optional<User> findUser = this.findOne(userId);
+
+        if(findUser.isEmpty()){
+            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+        }
+
+        boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
+
+        if(!isPasswordCorrect){
+            throw new InvalidParameterException("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요.");
+        }
+
+        userRepository.delete(findUser.get());
     }
 }

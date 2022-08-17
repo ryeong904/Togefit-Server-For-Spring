@@ -4,7 +4,7 @@ public class UserInfo {
     private String id;
     private String password;
 
-    public String getUserId() {
+    public String getId() {
         return id;
     }
 
