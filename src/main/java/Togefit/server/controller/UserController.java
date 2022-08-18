@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
@@ -76,6 +78,16 @@ public class UserController {
 
         resp.setResult("정상적으로 회원 탈퇴 되었습니다.");
         return resp;
+    }
+
+    @PatchMapping("/update")
+    public String userUpdate(@ModelAttribute User user, @RequestParam String currentPassword, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+        user.setUserId(userId);
+        userService.updateUser(user, currentPassword);
+
+        return "ok";
     }
 
     private void deleteCookie(HttpServletResponse response){

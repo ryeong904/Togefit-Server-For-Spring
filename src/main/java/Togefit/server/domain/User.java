@@ -1,9 +1,12 @@
 package Togefit.server.domain;
 
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
 @Entity
+@DynamicUpdate
 public class User {
     private String name;
     private String nickname;

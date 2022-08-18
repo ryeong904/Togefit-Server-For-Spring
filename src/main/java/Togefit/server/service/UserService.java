@@ -1,6 +1,7 @@
 package Togefit.server.service;
 
 import Togefit.server.domain.User;
+import Togefit.server.repository.JpaUserRepository;
 import Togefit.server.repository.UserRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
@@ -22,9 +23,11 @@ public class UserService {
     String JWT_SECRET_KEY;
 
     private final UserRepository userRepository;
+    private final JpaUserRepository jpaUserRepository;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JpaUserRepository jpaUserRepository) {
         this.userRepository = userRepository;
+        this.jpaUserRepository = jpaUserRepository;
     }
 
     public String join(User user){
@@ -33,7 +36,7 @@ public class UserService {
         // user의 패스워드 변경해주기
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        userRepository.save(user);
+        jpaUserRepository.save(user);
         return user.getUserId();
     }
 
@@ -94,4 +97,42 @@ public class UserService {
 
         userRepository.delete(findUser.get());
     }
+
+    public void updateUser(User user, String currentPassword){
+
+        // 1. 해당 유저가 있는지 찾기(userId)
+        // 2. 현재입력한 비밀번호를 받아서 비교함 -> 다를 경우 일치하지 않는 경고문
+        // 3. 비밀번호를 바꾸려는 경우에는 (password 조건문 통과시) 해쉬화해서 전달
+
+        Optional<User> findUser = this.findOne(user.getUserId());
+
+        if(findUser.isEmpty()){
+            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+        }
+
+        boolean isPasswordCorrect = BCrypt.checkpw(currentPassword, findUser.get().getPassword());
+
+
+        if(!isPasswordCorrect){
+            throw new InvalidParameterException("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요.");
+        }
+
+        User updateUser = updateUserInfo(findUser.get(), user);
+        jpaUserRepository.save(updateUser);
+
+    }
+
+    private User updateUserInfo(User user, User updateUser){
+        if(updateUser.getPassword() != null){
+            String hashedPassword = BCrypt.hashpw(updateUser.getPassword(), BCrypt.gensalt());
+            user.setPassword(hashedPassword);
+        }
+        if(updateUser.getName() != null) user.setName(updateUser.getName());
+        if(updateUser.getNickname() != null) {
+            user.setNickname(updateUser.getNickname());
+        }
+
+        return user;
+    }
+
 }
