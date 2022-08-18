@@ -6,18 +6,15 @@ import Togefit.server.response.OperationResponse;
 import Togefit.server.response.UserLoginResponse;
 import Togefit.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-@RequestMapping("api/user")
+@RequestMapping("/users")
 @RestController
 public class UserController {
 
@@ -28,7 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/register")
+    @PostMapping("/")
     public String create(@RequestBody User newUser){
         return userService.join(newUser);
     }
@@ -57,7 +54,7 @@ public class UserController {
         return resp;
     }
 
-    @GetMapping("/info/{userId}")
+    @GetMapping("/{userId}")
     public User getUserInfo(@PathVariable String userId){
         Optional<User> findUser = userService.findOne(userId);
         if(findUser.isEmpty()){
@@ -66,11 +63,11 @@ public class UserController {
         return findUser.get();
     }
 
-    @PostMapping("/unregister")
-    public OperationResponse userUnregister(@RequestBody UserInfo userInfo, HttpServletResponse response){
+    @DeleteMapping("/")
+    public OperationResponse userUnregister(@RequestBody UserInfo userInfo, HttpServletRequest request, HttpServletResponse response){
         OperationResponse resp = new OperationResponse();
 
-        String userId = userInfo.getId();
+        String userId = (String) request.getAttribute("userId");
         String password = userInfo.getPassword();
 
         userService.deleteUser(userId, password);
@@ -80,7 +77,7 @@ public class UserController {
         return resp;
     }
 
-    @PatchMapping("/update")
+    @PatchMapping("/")
     public String userUpdate(@ModelAttribute User user, @RequestParam String currentPassword, HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
         String userId = (String) request.getAttribute("userId");
