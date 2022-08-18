@@ -15,7 +15,6 @@ public class InterceptorConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(loginRequiredInterceptor)
-                .addPathPatterns("/api/user/unregister")
-                .addPathPatterns("/api/user/update");
+                .addPathPatterns("/users/");
     }
 }

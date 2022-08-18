@@ -3,6 +3,7 @@ package Togefit.server.interceptor;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,6 +24,11 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
     @Override
     @ResponseBody
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
+        String method = request.getMethod();
+        if(method.equals("GET") || method.equals("POST")){
+            return true;
+        }
+
         String token = extractToken(request.getCookies()).trim();
 
         // 토큰이 없으면 false 리턴
