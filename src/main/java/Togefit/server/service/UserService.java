@@ -2,7 +2,6 @@ package Togefit.server.service;
 
 import Togefit.server.domain.User;
 import Togefit.server.repository.JpaUserRepository;
-import Togefit.server.repository.UserRepository;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -22,12 +21,10 @@ public class UserService {
     @Value("${JWT_SECRET_KEY}")
     String JWT_SECRET_KEY;
 
-    private final UserRepository userRepository;
-    private final JpaUserRepository jpaUserRepository;
+    private final JpaUserRepository userRepository;
 
-    public UserService(UserRepository userRepository, JpaUserRepository jpaUserRepository) {
+    public UserService(JpaUserRepository userRepository) {
         this.userRepository = userRepository;
-        this.jpaUserRepository = jpaUserRepository;
     }
 
     public String join(User user){
@@ -36,7 +33,7 @@ public class UserService {
         // user의 패스워드 변경해주기
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
-        jpaUserRepository.save(user);
+        userRepository.save(user);
         return user.getUserId();
     }
 
@@ -66,9 +63,8 @@ public class UserService {
         }
 
         String nickname = findUser.get().getNickname();
-        String accessToken = makeJwtToken(userId, nickname);
 
-        return accessToken;
+        return makeJwtToken(userId, nickname);
     }
 
     private String makeJwtToken(String userId, String nickname) {
@@ -118,7 +114,7 @@ public class UserService {
         }
 
         User updateUser = updateUserInfo(findUser.get(), user);
-        jpaUserRepository.save(updateUser);
+        userRepository.save(updateUser);
 
     }
 
