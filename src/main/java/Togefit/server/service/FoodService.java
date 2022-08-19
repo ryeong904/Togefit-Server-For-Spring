@@ -82,4 +82,8 @@ public class FoodService {
 
         return food;
     }
+
+    public List<Food> searchFood(String foodName){
+        return foodRepository.findByNameContaining(foodName);
+    }
 }

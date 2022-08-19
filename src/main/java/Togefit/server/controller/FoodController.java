@@ -48,4 +48,9 @@ public class FoodController {
         return resp;
     }
 
+    @GetMapping("/search")
+    public List<Food> searchFood(@RequestParam("foodName") String foodName){
+        return foodService.searchFood(foodName);
+    }
+
 }
