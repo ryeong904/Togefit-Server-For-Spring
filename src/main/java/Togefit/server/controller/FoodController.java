@@ -7,6 +7,8 @@ import Togefit.server.service.FoodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RequestMapping("/foods")
 @RestController
 public class FoodController {
@@ -31,6 +33,11 @@ public class FoodController {
         foodService.deleteFood(idInfo.getId());
         resp.setResult("음식이 정상적으로 삭제 되었습니다.");
         return resp;
+    }
+
+    @GetMapping("/")
+    public List<Food> getFoodList(){
+        return foodService.getFoodList();
     }
 
 }

@@ -6,6 +6,7 @@ import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.ErrorCode;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -44,5 +45,9 @@ public class FoodService {
 
     public Optional<Food> findOne(Long id){
         return foodRepository.findById(id);
+    }
+
+    public List<Food> getFoodList(){
+        return foodRepository.findAll();
     }
 }
