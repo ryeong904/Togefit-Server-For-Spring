@@ -78,13 +78,13 @@ public class UserController {
     }
 
     @PatchMapping("/")
-    public String userUpdate(@ModelAttribute User user, @RequestParam String currentPassword, HttpServletRequest request){
+    public OperationResponse userUpdate(@ModelAttribute User user, @RequestParam String currentPassword, HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
         String userId = (String) request.getAttribute("userId");
         user.setUserId(userId);
         userService.updateUser(user, currentPassword);
-
-        return "ok";
+        resp.setResult("회원 정보가 정상적으로 수정되었습니다.");
+        return resp;
     }
 
     private void deleteCookie(HttpServletResponse response){

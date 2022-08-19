@@ -31,13 +31,21 @@ public class FoodController {
     public OperationResponse delete(@RequestBody IdInfo idInfo){
         OperationResponse resp = new OperationResponse();
         foodService.deleteFood(idInfo.getId());
-        resp.setResult("음식이 정상적으로 삭제 되었습니다.");
+        resp.setResult("음식이 정상적으로 삭제되었습니다.");
         return resp;
     }
 
     @GetMapping("/")
     public List<Food> getFoodList(){
         return foodService.getFoodList();
+    }
+
+    @PatchMapping("/")
+    public OperationResponse update(@RequestBody Food food){
+        OperationResponse resp = new OperationResponse();
+        foodService.updateFood(food);
+        resp.setResult("음식 정보가 정상적으로 수정되었습니다.");
+        return resp;
     }
 
 }

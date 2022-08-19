@@ -10,4 +10,12 @@ public class OperationResponse {
     public void setResult(String result) {
         this.result = result;
     }
+
+    public OperationResponse(){
+
+    }
+
+    public OperationResponse(String result){
+        this.result = result;
+    }
 }
