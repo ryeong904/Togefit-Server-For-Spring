@@ -10,13 +10,26 @@ import javax.persistence.Id;
 @Entity
 public class Food {
 
-    public long getId() {
-        return id;
-    }
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+    private String name;
+
+    @ColumnDefault("0")
+    private Integer carbohydrate;
+
+    @ColumnDefault("0")
+    private Integer protein;
+
+    @ColumnDefault("0")
+    private Integer fat;
+
+    @ColumnDefault("0")
+    private Integer quantity;
+
+    @ColumnDefault("0")
+    private Integer calories;
 
     public String getName() {
         return name;
@@ -26,65 +39,52 @@ public class Food {
         this.name = name;
     }
 
-    public int getCarbohydrate() {
+
+    public Integer getCarbohydrate() {
         return carbohydrate;
     }
 
-    public void setCarbohydrate(int carbohydrate) {
+    public void setCarbohydrate(Integer carbohydrate) {
         this.carbohydrate = carbohydrate;
     }
 
-    public int getProtein() {
+    public Integer getProtein() {
         return protein;
     }
 
-    public void setProtein(int protein) {
+    public void setProtein(Integer protein) {
         this.protein = protein;
     }
 
-    public int getFat() {
+    public Integer getFat() {
         return fat;
     }
 
-    public void setFat(int fat) {
+    public void setFat(Integer fat) {
         this.fat = fat;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
-    public int getCalories() {
+    public Integer getCalories() {
         return calories;
     }
 
-    public void setCalories(int calories) {
+    public void setCalories(Integer calories) {
         this.calories = calories;
     }
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
+    public Long getId() {
+        return id;
+    }
 
-    private String name;
-
-    @ColumnDefault("0")
-    private int carbohydrate;
-
-    @ColumnDefault("0")
-    private int protein;
-
-    @ColumnDefault("0")
-    private int fat;
-
-    @ColumnDefault("0")
-    private int quantity;
-
-    @ColumnDefault("0")
-    private int calories;
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
