@@ -1,4 +1,4 @@
-package Togefit.server.response;
+package Togefit.server.response.error;
 
 public class CustomException extends RuntimeException{
     private final ErrorCode errorCode;

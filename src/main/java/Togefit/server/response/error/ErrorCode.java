@@ -1,8 +1,6 @@
-package Togefit.server.response;
+package Togefit.server.response.error;
 
-public enum ErrorCode {
-    USER_NOT_FOUND(400, "해당 유저를 찾지 못했습니다."),
-    DUPLICATE_USER(400, "이 아이디는 현재 사용중입니다. 다른 아이디를 입력해주세요.");
+public class ErrorCode {
     private int status;
     private String message;
 
@@ -22,7 +20,12 @@ public enum ErrorCode {
         this.message = message;
     }
 
-    ErrorCode(int status, String message){
+    public ErrorCode(String message){
+        this.status = 400;
+        this.message = message;
+    }
+
+    public ErrorCode(int status, String message){
         this.status = status;
         this.message = message;
     }
