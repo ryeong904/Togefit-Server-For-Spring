@@ -2,6 +2,8 @@ package Togefit.server.service;
 
 import Togefit.server.domain.User;
 import Togefit.server.repository.JpaUserRepository;
+import Togefit.server.response.CustomException;
+import Togefit.server.response.ErrorCode;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -14,6 +16,8 @@ import java.security.InvalidParameterException;
 import java.util.Date;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import static Togefit.server.response.ErrorCode.*;
 
 @Service
 @Transactional
@@ -40,7 +44,7 @@ public class UserService {
     private void validateUser(User user){
         userRepository.findByUserId(user.getUserId())
                 .ifPresent(u -> {
-                    throw new IllegalStateException("이 아이디는 현재 사용중입니다. 다른 아이디를 입력해주세요.");
+                    throw new CustomException(DUPLICATE_USER);
                 });
 
     }
@@ -53,7 +57,7 @@ public class UserService {
         Optional<User> findUser = this.findOne(userId);
 
         if(findUser.isEmpty()){
-            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
@@ -82,7 +86,7 @@ public class UserService {
         Optional<User> findUser = this.findOne(userId);
 
         if(findUser.isEmpty()){
-            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
@@ -103,7 +107,7 @@ public class UserService {
         Optional<User> findUser = this.findOne(user.getUserId());
 
         if(findUser.isEmpty()){
-            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+            throw new CustomException(USER_NOT_FOUND);
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(currentPassword, findUser.get().getPassword());
