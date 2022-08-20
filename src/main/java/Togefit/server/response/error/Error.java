@@ -1,6 +1,6 @@
 package Togefit.server.response.error;
 
-public class ErrorCode {
+public class Error {
     private int status;
     private String message;
 
@@ -8,24 +8,16 @@ public class ErrorCode {
         return status;
     }
 
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
     public String getMessage() {
         return message;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    public ErrorCode(String message){
+    public Error(String message){
         this.status = 400;
         this.message = message;
     }
 
-    public ErrorCode(int status, String message){
+    public Error(int status, String message){
         this.status = status;
         this.message = message;
     }

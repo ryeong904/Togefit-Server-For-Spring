@@ -3,7 +3,7 @@ package Togefit.server.service;
 import Togefit.server.domain.User;
 import Togefit.server.repository.JpaUserRepository;
 import Togefit.server.response.error.CustomException;
-import Togefit.server.response.error.ErrorCode;
+import Togefit.server.response.error.Error;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -42,7 +42,7 @@ public class UserService {
     private void validateUser(User user){
         userRepository.findByUserId(user.getUserId())
                 .ifPresent(u -> {
-                    throw new CustomException(new ErrorCode("이 아이디는 현재 사용중입니다. 다른 아이디를 입력해주세요."));
+                    throw new CustomException(new Error("이 아이디는 현재 사용중입니다. 다른 아이디를 입력해주세요."));
                 });
 
     }
@@ -55,13 +55,13 @@ public class UserService {
         Optional<User> findUser = this.findOne(userId);
 
         if(findUser.isEmpty()){
-            throw new CustomException(new ErrorCode("해당 유저를 찾지 못했습니다."));
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
 
         if(!isPasswordCorrect){
-            throw new CustomException(new ErrorCode("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요."));
+            throw new CustomException(new Error("비밀번호가 일치하지 않습니다. 다시 한 번 확인해주세요."));
         }
 
         String nickname = findUser.get().getNickname();
@@ -84,7 +84,7 @@ public class UserService {
         Optional<User> findUser = this.findOne(userId);
 
         if(findUser.isEmpty()){
-            throw new CustomException(new ErrorCode("해당 유저를 찾지 못했습니다."));
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(password, findUser.get().getPassword());
@@ -105,7 +105,7 @@ public class UserService {
         Optional<User> findUser = this.findOne(user.getUserId());
 
         if(findUser.isEmpty()){
-            throw new CustomException(new ErrorCode("해당 유저를 찾지 못했습니다."));
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
         }
 
         boolean isPasswordCorrect = BCrypt.checkpw(currentPassword, findUser.get().getPassword());

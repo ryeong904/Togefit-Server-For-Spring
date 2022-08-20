@@ -1,13 +1,13 @@
 package Togefit.server.response.error;
 
 public class CustomException extends RuntimeException{
-    private final ErrorCode errorCode;
+    private final Error error;
 
-    public CustomException(ErrorCode errorCode) {
-        this.errorCode = errorCode;
+    public CustomException(Error error) {
+        this.error = error;
     }
 
-    public ErrorCode getErrorCode() {
-        return errorCode;
+    public Error getErrorCode() {
+        return error;
     }
 }

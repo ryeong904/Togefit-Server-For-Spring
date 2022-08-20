@@ -3,7 +3,7 @@ package Togefit.server.service;
 import Togefit.server.domain.Food;
 import Togefit.server.repository.FoodRepository;
 import Togefit.server.response.error.CustomException;
-import Togefit.server.response.error.ErrorCode;
+import Togefit.server.response.error.Error;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class FoodService {
     public String addFood(Food food){
         // 음식 이름 필수
         if(food.getName().equals("")){
-            throw new CustomException(new ErrorCode("음식 이름이 반드시 필요합니다."));
+            throw new CustomException(new Error("음식 이름이 반드시 필요합니다."));
         }
 
         food = foodNullCheck(food);
@@ -28,7 +28,7 @@ public class FoodService {
         // 음수 예외처리
         if(food.getCarbohydrate() < 0 || food.getFat() < 0 || food.getProtein() < 0 ||
                 food.getCalories() < 0 || food.getQuantity() < 0){
-            throw new CustomException(new ErrorCode("음수의 데이터는 포함될 수 없습니다."));
+            throw new CustomException(new Error("음수의 데이터는 포함될 수 없습니다."));
         }
         foodRepository.save(food);
         return food.getName();
@@ -38,7 +38,7 @@ public class FoodService {
         Optional<Food> findFood = this.findOne(id);
 
         if(findFood.isEmpty()){
-            throw new CustomException(new ErrorCode("해당 음식을 찾지 못했습니다."));
+            throw new CustomException(new Error("해당 음식을 찾지 못했습니다."));
         }
         foodRepository.delete(findFood.get());
     }
@@ -55,7 +55,7 @@ public class FoodService {
         Optional<Food> findFood = this.findOne(food.getId());
 
         if(findFood.isEmpty()){
-            throw new CustomException(new ErrorCode("해당 음식을 찾지 못했습니다."));
+            throw new CustomException(new Error("해당 음식을 찾지 못했습니다."));
         }
 
         Food updateFood = updateFoodInfo(findFood.get(), food);
