@@ -39,4 +39,14 @@ public class ExerciseService {
     public List<Exercise> getExerciseList() {
         return exerciseRepository.findAll();
     }
+
+    public void deleteExercise(String name){
+        Optional<Exercise> findExercise = this.findOne(name);
+
+        if(findExercise.isEmpty()){
+            throw new CustomException(new Error("해당 운동을 찾지 못했습니다."));
+        }
+
+        exerciseRepository.delete(findExercise.get());
+    }
 }

@@ -30,4 +30,12 @@ public class ExerciseController {
     public List<Exercise> getExerciseList(){
         return exerciseService.getExerciseList();
     }
+
+    @DeleteMapping("/")
+    public OperationResponse delete(@RequestBody Exercise exercise){
+        OperationResponse resp = new OperationResponse();
+        exerciseService.deleteExercise(exercise.getName());
+        resp.setResult("운동이 정상적으로 삭제되었습니다.");
+        return resp;
+    }
 }
