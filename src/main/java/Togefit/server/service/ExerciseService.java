@@ -6,6 +6,7 @@ import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -33,5 +34,9 @@ public class ExerciseService {
 
     public Optional<Exercise> findOne(String exercise){
         return exerciseRepository.findByName(exercise);
+    }
+
+    public List<Exercise> getExerciseList() {
+        return exerciseRepository.findAll();
     }
 }
