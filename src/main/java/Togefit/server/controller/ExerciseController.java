@@ -38,4 +38,9 @@ public class ExerciseController {
         resp.setResult("운동이 정상적으로 삭제되었습니다.");
         return resp;
     }
+
+    @GetMapping("/search")
+    public List<Exercise> searchExercise(@RequestParam("exerciseName") String exerciseName){
+        return exerciseService.searchExercise(exerciseName);
+    }
 }

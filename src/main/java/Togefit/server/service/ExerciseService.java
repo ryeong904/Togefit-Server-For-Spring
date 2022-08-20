@@ -49,4 +49,8 @@ public class ExerciseService {
 
         exerciseRepository.delete(findExercise.get());
     }
+
+    public List<Exercise> searchExercise(String exerciseName){
+        return exerciseRepository.findByNameContaining(exerciseName);
+    }
 }
