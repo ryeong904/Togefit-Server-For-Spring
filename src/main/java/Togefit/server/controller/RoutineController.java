@@ -1,5 +1,6 @@
 package Togefit.server.controller;
 
+import Togefit.server.model.IdInfo;
 import Togefit.server.model.RoutineInfo;
 import Togefit.server.model.RoutineListInfo;
 import Togefit.server.response.OperationResponse;
@@ -34,6 +35,15 @@ public class RoutineController {
         String userId = (String) request.getAttribute("userId");
 
         return routineService.getRoutine(userId);
+    }
+
+    @DeleteMapping("/")
+    public OperationResponse deleteRoutine(@RequestBody IdInfo idInfo, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+        routineService.deleteRoutine(userId, idInfo.getId());
+        resp.setResult("정상적으로 루틴이 삭제되었습니다.");
+        return resp;
     }
 
 }

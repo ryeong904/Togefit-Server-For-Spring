@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ExerciseInfoRepository extends JpaRepository<ExerciseInfo, Long> {
     List<ExerciseInfo> findByRoutineListId(Long id);
+    void deleteByRoutineListId(Long id);
 }
