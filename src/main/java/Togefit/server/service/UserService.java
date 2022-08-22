@@ -53,7 +53,6 @@ public class UserService {
 
     public String getUserToken(String userId, String password){
         Optional<User> findUser = this.findOne(userId);
-
         if(findUser.isEmpty()){
             throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
         }

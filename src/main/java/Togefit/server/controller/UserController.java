@@ -4,6 +4,8 @@ import Togefit.server.domain.User;
 import Togefit.server.model.UserInfo;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.response.UserLoginResponse;
+import Togefit.server.response.error.CustomException;
+import Togefit.server.response.error.Error;
 import Togefit.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RequestMapping("/users")
@@ -58,7 +59,7 @@ public class UserController {
     public User getUserInfo(@PathVariable String userId){
         Optional<User> findUser = userService.findOne(userId);
         if(findUser.isEmpty()){
-            throw new NoSuchElementException("해당 유저를 찾지 못했습니다.");
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
         }
         return findUser.get();
     }
