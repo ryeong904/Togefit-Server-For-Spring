@@ -3,7 +3,6 @@ package Togefit.server.interceptor;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -13,8 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.Optional;
+
 
 @Component
 public class LoginRequiredInterceptor implements HandlerInterceptor{
@@ -24,9 +22,13 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
     @Override
     @ResponseBody
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
+        String uri = request.getRequestURI();
+
         String method = request.getMethod();
-        if(method.equals("GET") || method.equals("POST")){
-            return true;
+        if(!uri.equals("/routines/")){
+            if(method.equals("GET") || method.equals("POST")){
+                return true;
+            }
         }
 
         String token = extractToken(request.getCookies()).trim();

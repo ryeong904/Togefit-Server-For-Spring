@@ -1,6 +1,5 @@
-package Togefit.server;
+package Togefit.server.interceptor;
 
-import Togefit.server.interceptor.LoginRequiredInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -15,6 +14,7 @@ public class InterceptorConfigure implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(loginRequiredInterceptor)
-                .addPathPatterns("/users/");
+                .addPathPatterns("/users/")
+                .addPathPatterns("/routines/");
     }
 }
