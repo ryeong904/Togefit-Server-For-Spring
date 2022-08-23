@@ -25,7 +25,7 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
         String uri = request.getRequestURI();
 
         String method = request.getMethod();
-        if(!uri.equals("/routines/")){
+        if(!uri.contains("/routines/")){
             if(method.equals("GET") || method.equals("POST")){
                 return true;
             }
