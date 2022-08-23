@@ -61,33 +61,64 @@ public class RoutineService {
 
         List<Routine> routine = routineRepository.findByUserId(userId);
 
-        RoutineListInfo[] newRoutineListInfo = new RoutineListInfo[routine.size()];
+        List<RoutineListInfo> newRoutineListInfo = new ArrayList<>();
 
         for(int i = 0 ; i < routine.size(); i++){
             Long routineListId = routine.get(i).getRoutineListId();
 
             // 루틴 이름 설정
-            Optional<RoutineList> routinelist = routineListRepository.findById(routineListId);
-            newRoutineListInfo[i] = new RoutineListInfo();
-            newRoutineListInfo[i].setRoutineName(routinelist.get().getRoutineName());
+            Optional<RoutineList> routineList = routineListRepository.findById(routineListId);
 
-            List<ExerciseInfo> exerciseInfos = exerciseInfoRepository.findByRoutineListId(routineListId);
-            List<ExerciseInfo> newExercistInfo = new ArrayList<>();
-
-            for(int j = 0; j < exerciseInfos.size(); j++){
-                ExerciseInfo exInfo = new ExerciseInfo();
-                exInfo.setName(exerciseInfos.get(j).getName());
-                exInfo.setWeight(exerciseInfos.get(j).getWeight());
-                exInfo.setCount(exerciseInfos.get(j).getCount());
-                exInfo.setSetCount(exerciseInfos.get(j).getSetCount());
-                newExercistInfo.add(exInfo);
+            if(routineList.isEmpty()){
+                continue;
             }
 
-            ExerciseInfo[] exercistInfo = exerciseInfos.toArray(new ExerciseInfo[newExercistInfo.size()]);
-            newRoutineListInfo[i].setRoutineList(exercistInfo);
+            RoutineListInfo routineListInfo = new RoutineListInfo();
+            routineListInfo.setRoutineName(routineList.get().getRoutineName());
+
+            // 루틴 내용 설정
+            // exerciseInfos : exerciseInfo에서 루틴 번호로 찾은 리스트들
+            List<ExerciseInfo> exerciseInfos = exerciseInfoRepository.findByRoutineListId(routineListId);
+
+            ExerciseInfo[] exerciseInfo = exerciseInfos.toArray(new ExerciseInfo[exerciseInfos.size()]);
+            routineListInfo.setRoutineList(exerciseInfo);
+
+            newRoutineListInfo.add(routineListInfo);
         }
 
-        routines.setRoutines(newRoutineListInfo);
+        routines.setRoutines(newRoutineListInfo.toArray(new RoutineListInfo[newRoutineListInfo.size()]));
+        return routines;
+    }
+
+    public RoutineInfo searchRoutine(String userId, String routineName){
+        RoutineInfo routines = new RoutineInfo();
+        routines.setUserId(userId);
+
+        List<Routine> routine = routineRepository.findByUserId(userId);
+
+        List<RoutineListInfo> newRoutineListInfo = new ArrayList<>();
+
+        for(int i = 0 ; i < routine.size(); i++){
+            Long routineListId = routine.get(i).getRoutineListId();
+
+            Optional<RoutineList> routineList = routineListRepository.findById(routineListId);
+
+            if(routineList.isEmpty() || !routineList.get().getRoutineName().contains(routineName)){
+                continue;
+            }
+
+            RoutineListInfo routineListInfo = new RoutineListInfo();
+            routineListInfo.setRoutineName(routineList.get().getRoutineName());
+
+            List<ExerciseInfo> exerciseInfos = exerciseInfoRepository.findByRoutineListId(routineListId);
+
+            ExerciseInfo[] exerciseInfo = exerciseInfos.toArray(new ExerciseInfo[exerciseInfos.size()]);
+            routineListInfo.setRoutineList(exerciseInfo);
+
+            newRoutineListInfo.add(routineListInfo);
+        }
+
+        routines.setRoutines(newRoutineListInfo.toArray(new RoutineListInfo[newRoutineListInfo.size()]));
         return routines;
     }
 
@@ -112,5 +143,4 @@ public class RoutineService {
         routineListRepository.deleteById(id);
         exerciseInfoRepository.deleteByRoutineListId(id);
     }
-
 }

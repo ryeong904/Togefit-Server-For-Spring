@@ -46,4 +46,11 @@ public class RoutineController {
         return resp;
     }
 
+    @GetMapping("/search")
+    public RoutineInfo searchRoutine(@RequestParam("routineName") String routineName, HttpServletRequest request){
+        String userId = (String) request.getAttribute("userId");
+        System.out.println(userId);
+        return routineService.searchRoutine(userId, routineName);
+    }
+
 }
