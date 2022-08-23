@@ -19,14 +19,22 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
     @Value("${JWT_SECRET_KEY}")
     String JWT_SECRET_KEY;
 
+    private boolean checkUserHttpMethod(String method) {
+        if(method.equals("PATCH") || method.equals("DELETE")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     @Override
     @ResponseBody
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
         String uri = request.getRequestURI();
 
         String method = request.getMethod();
-        if(!uri.contains("/routines/")){
-            if(method.equals("GET") || method.equals("POST")){
+        if(uri.equals("/users/")){
+            if(checkUserHttpMethod(method) == false){
                 return true;
             }
         }

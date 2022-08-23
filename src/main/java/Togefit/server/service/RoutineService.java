@@ -11,7 +11,6 @@ import Togefit.server.repository.Routine.RoutineListRepository;
 import Togefit.server.repository.Routine.RoutineRepository;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -21,12 +20,13 @@ import java.util.Optional;
 
 @Service
 public class RoutineService {
-    private UserService userService;
+    private final UserService userService;
     private final RoutineRepository routineRepository;
     private final RoutineListRepository routineListRepository;
     private final ExerciseInfoRepository exerciseInfoRepository;
 
-    public RoutineService(RoutineRepository routineRepository, RoutineListRepository routineListRepository, ExerciseInfoRepository exerciseInfoRepository) {
+    public RoutineService(UserService userService, RoutineRepository routineRepository, RoutineListRepository routineListRepository, ExerciseInfoRepository exerciseInfoRepository) {
+        this.userService = userService;
         this.routineRepository = routineRepository;
         this.routineListRepository = routineListRepository;
         this.exerciseInfoRepository = exerciseInfoRepository;
