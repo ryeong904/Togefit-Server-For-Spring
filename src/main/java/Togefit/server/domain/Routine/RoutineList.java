@@ -13,6 +13,10 @@ public class RoutineList {
     public RoutineList(String routineName){
         this.routineName = routineName;
     }
+    public RoutineList(Long routineListId, String routineName){
+        this.routineListId = routineListId;
+        this.routineName = routineName;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long routineListId;

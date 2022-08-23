@@ -6,6 +6,16 @@ import javax.persistence.Id;
 
 @Entity
 public class ExerciseInfo {
+    public ExerciseInfo(){
+
+    }
+    public ExerciseInfo(Long routineListId, String name, Integer count, Integer setCount, Integer weight){
+        this.routineListId = routineListId;
+        this.name = name;
+        this.count = count;
+        this.setCount = setCount;
+        this.weight = weight;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

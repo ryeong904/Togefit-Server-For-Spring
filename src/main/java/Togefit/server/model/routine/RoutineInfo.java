@@ -1,6 +1,4 @@
-package Togefit.server.model;
-
-import Togefit.server.domain.Routine.RoutineList;
+package Togefit.server.model.routine;
 
 public class RoutineInfo {
     private String userId;

@@ -3,13 +3,15 @@ package Togefit.server.service;
 import Togefit.server.domain.Routine.ExerciseInfo;
 import Togefit.server.domain.Routine.Routine;
 import Togefit.server.domain.Routine.RoutineList;
-import Togefit.server.model.RoutineInfo;
-import Togefit.server.model.RoutineListInfo;
+import Togefit.server.model.routine.RoutineInfo;
+import Togefit.server.model.routine.RoutineListInfo;
+import Togefit.server.model.routine.UpdateRoutineInfo;
 import Togefit.server.repository.Routine.ExerciseInfoRepository;
 import Togefit.server.repository.Routine.RoutineListRepository;
 import Togefit.server.repository.Routine.RoutineRepository;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -19,6 +21,7 @@ import java.util.Optional;
 
 @Service
 public class RoutineService {
+    private UserService userService;
     private final RoutineRepository routineRepository;
     private final RoutineListRepository routineListRepository;
     private final ExerciseInfoRepository exerciseInfoRepository;
@@ -30,6 +33,10 @@ public class RoutineService {
     }
 
     public String saveRoutineList(RoutineListInfo routineListInfo, String userId){
+        if(userService.findOne(userId).isEmpty()){
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
+        }
+
         RoutineList newRoutineList = new RoutineList(routineListInfo.getRoutineName());
         routineListRepository.save(newRoutineList);
 
@@ -44,18 +51,26 @@ public class RoutineService {
     }
 
     private void saveRoutineInfo(Long id, ExerciseInfo[] infos){
+        List<ExerciseInfo> newExerciseInfo = new ArrayList<>();
+
+        // 유효한 값인지 검사
         for(int i = 0 ; i < infos.length; i++){
-            ExerciseInfo newExerciseInfo = new ExerciseInfo();
-            newExerciseInfo.setRoutineListId(id);
-            newExerciseInfo.setName(infos[i].getName());
-            newExerciseInfo.setCount(infos[i].getCount());
-            newExerciseInfo.setWeight(infos[i].getWeight());
-            newExerciseInfo.setSetCount(infos[i].getSetCount());
-            exerciseInfoRepository.save(newExerciseInfo);
+            if(infos[i].getCount() < 0 || infos[i].getWeight() < 0 || infos[i].getSetCount() <0){
+                throw new CustomException(new Error("0보다 큰 숫자를 입력해주세요."));
+            }
+            ExerciseInfo info = new ExerciseInfo(id, infos[i].getName(), infos[i].getCount(), infos[i].getSetCount(), infos[i].getWeight());
+            newExerciseInfo.add(info);
+        }
+
+        for(ExerciseInfo info : newExerciseInfo){
+            exerciseInfoRepository.save(info);
         }
     }
 
     public RoutineInfo getRoutine(String userId){
+        if(userService.findOne(userId).isEmpty()){
+            throw new CustomException(new Error("해당 유저를 찾지 못했습니다."));
+        }
         RoutineInfo routines = new RoutineInfo();
         routines.setUserId(userId);
 
@@ -142,5 +157,28 @@ public class RoutineService {
         routineRepository.delete(findRoutine.get());
         routineListRepository.deleteById(id);
         exerciseInfoRepository.deleteByRoutineListId(id);
+    }
+
+    @Transactional
+    public void updateRoutine(UpdateRoutineInfo updateRoutineInfo, String userId){
+        Optional<Routine> findRoutine = routineRepository.findByRoutineListId(updateRoutineInfo.getId());
+        if(findRoutine.isEmpty()){
+            throw new CustomException(new Error("해당 루틴을 찾지 못했습니다."));
+        }
+
+        if(!findRoutine.get().getUserId().equals(userId)){
+            throw new CustomException(new Error(403, "작성자만 수정할 수 있습니다."));
+        }
+
+        // 이름이 null이 아닐 경우 update
+        if(updateRoutineInfo.getRoutine_name() != null){
+            routineListRepository.save(new RoutineList(updateRoutineInfo.getId(), updateRoutineInfo.getRoutine_name()));
+        }
+
+        // 루틴 내용 update
+        if(updateRoutineInfo.getRoutine_list() != null){
+            exerciseInfoRepository.deleteByRoutineListId(updateRoutineInfo.getId());
+            saveRoutineInfo(updateRoutineInfo.getId(), updateRoutineInfo.getRoutine_list());
+        }
     }
 }

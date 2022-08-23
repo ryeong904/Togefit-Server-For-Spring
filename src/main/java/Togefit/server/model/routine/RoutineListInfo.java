@@ -1,4 +1,4 @@
-package Togefit.server.model;
+package Togefit.server.model.routine;
 
 import Togefit.server.domain.Routine.ExerciseInfo;
 

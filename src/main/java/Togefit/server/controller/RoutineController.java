@@ -1,9 +1,12 @@
 package Togefit.server.controller;
 
 import Togefit.server.model.IdInfo;
-import Togefit.server.model.RoutineInfo;
-import Togefit.server.model.RoutineListInfo;
+import Togefit.server.model.routine.RoutineInfo;
+import Togefit.server.model.routine.RoutineListInfo;
+import Togefit.server.model.routine.UpdateRoutineInfo;
 import Togefit.server.response.OperationResponse;
+import Togefit.server.response.error.CustomException;
+import Togefit.server.response.error.Error;
 import Togefit.server.service.RoutineService;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,4 +56,16 @@ public class RoutineController {
         return routineService.searchRoutine(userId, routineName);
     }
 
+    @PatchMapping("/")
+    public OperationResponse updateRoutine(@RequestBody UpdateRoutineInfo updateRoutineInfo, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        if(updateRoutineInfo.getId() == null){
+            throw new CustomException(new Error("해당 루틴의 ID(Object ID)가 반드시 필요합니다."));
+        }
+        routineService.updateRoutine(updateRoutineInfo, userId);
+        resp.setResult("수정이 완료되었습니다.");
+        return resp;
+    }
 }
