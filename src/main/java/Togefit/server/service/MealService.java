@@ -3,15 +3,20 @@ package Togefit.server.service;
 import Togefit.server.domain.Meal.Meal;
 import Togefit.server.domain.Meal.MealArray;
 import Togefit.server.domain.Meal.MealArticle;
-import Togefit.server.model.MealInfo;
+import Togefit.server.model.meal.MealInfo;
+import Togefit.server.model.meal.MealInfoByArticleId;
+import Togefit.server.model.meal.MealList;
+import Togefit.server.model.meal.Meals;
 import Togefit.server.repository.Meal.MealArrayRepository;
 import Togefit.server.repository.Meal.MealArticleRepository;
 import Togefit.server.repository.Meal.MealRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MealService {
@@ -25,7 +30,7 @@ public class MealService {
         this.mealArticleRepository = mealArticleRepository;
     }
 
-    public void saveMeal(MealInfo mealInfo, String userId){
+    public void saveMeal(Meals mealInfo, String userId){
         MealArticle article = new MealArticle(userId);
         mealArticleRepository.save(article);
         Long articleId = article.getId();
@@ -49,14 +54,54 @@ public class MealService {
         mealArticleRepository.deleteById(articleId);
 
         List<Meal> findMeal = mealRepository.findByArticleId(articleId);
-        HashSet<Long> set = new HashSet<>();
-        for(Meal m : findMeal){
-            set.add(m.getMealGroupId());
-        }
+        HashSet<Long> set = getGroupId(findMeal);
         mealRepository.deleteByArticleId(articleId);
 
         for(Long l : set){
             mealArrayRepository.deleteById(l);
         }
+    }
+
+    private HashSet<Long> getGroupId(List<Meal> meal){
+        HashSet<Long> set = new HashSet<>();
+        for(Meal m : meal){
+            set.add(m.getMealGroupId());
+        }
+        return set;
+    }
+
+    public MealInfoByArticleId getMealArticle(Long articleId){
+        MealInfoByArticleId article = new MealInfoByArticleId();
+        Optional<MealArticle> findMealArticle = this.findOne(articleId);
+
+        // 아이디 설정
+        article.setUserId(findMealArticle.get().getUserId());
+
+        List<Meal> findMeal = mealRepository.findByArticleId(articleId);
+        HashSet<Long> set = getGroupId(findMeal);
+
+        MealList[] mealList = new MealList[set.size()];
+
+        for(int i=0; i<mealList.length; i++){
+            for(Long l : set){
+                List<Meal> list = mealRepository.findByMealGroupId(l);
+                MealList newMealList = new MealList();
+                newMealList.setMeal_list(new MealInfo[list.size()]);
+
+                int index = 0;
+                for(Meal m : list){
+                    MealInfo meal = new MealInfo(m.getFoodName(), m.getQuantity());
+                    newMealList.getMeal_list()[index] = meal;
+                    index += 1;
+                }
+                mealList[i] = newMealList;
+            }
+        }
+        article.setMeals(mealList);
+        return article;
+    }
+
+    private Optional<MealArticle> findOne(Long articleId){
+        return mealArticleRepository.findById(articleId);
     }
 }

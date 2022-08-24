@@ -27,6 +27,14 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
         }
     }
 
+    private boolean checkMealHttpMethod(String method){
+        if(method.equals("GET")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
     @Override
     @ResponseBody
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object obj) throws Exception {
@@ -35,6 +43,12 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
         String method = request.getMethod();
         if(uri.equals("/users/")){
             if(checkUserHttpMethod(method) == false){
+                return true;
+            }
+        }
+
+        if(uri.contains("/meals/")){
+            if(checkMealHttpMethod(method) == true){
                 return true;
             }
         }

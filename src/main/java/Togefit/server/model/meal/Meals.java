@@ -1,8 +1,8 @@
-package Togefit.server.model;
+package Togefit.server.model.meal;
 
 import Togefit.server.domain.Meal.Meal;
 
-public class MealInfo {
+public class Meals {
     private Meal[][] meals;
 
     public Meal[][] getMeals() {
