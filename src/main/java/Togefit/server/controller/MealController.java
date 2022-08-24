@@ -44,4 +44,9 @@ public class MealController {
         System.out.println(articleId);
         return mealService.getMealArticle(articleId);
     }
+
+    @GetMapping("/all")
+    public Object[] getAll(){
+        return mealService.getAllMeals();
+    }
 }

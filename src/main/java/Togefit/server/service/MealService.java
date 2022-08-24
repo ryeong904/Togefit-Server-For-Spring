@@ -101,6 +101,15 @@ public class MealService {
         return article;
     }
 
+    public Object[] getAllMeals(){
+        List<MealArticle> articles = mealArticleRepository.findAll();
+        Object[] obj = new Object[articles.size()];
+        for(int i = 0 ; i < articles.size(); i++){
+            obj[i] = this.getMealArticle(articles.get(i).getId());
+        }
+        return obj;
+    }
+
     private Optional<MealArticle> findOne(Long articleId){
         return mealArticleRepository.findById(articleId);
     }
