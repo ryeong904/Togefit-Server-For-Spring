@@ -13,10 +13,7 @@ import Togefit.server.repository.Meal.MealRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class MealService {
@@ -31,7 +28,7 @@ public class MealService {
     }
 
     public void saveMeal(Meals mealInfo, String userId){
-        MealArticle article = new MealArticle(userId);
+        MealArticle article = new MealArticle(userId, new Date());
         mealArticleRepository.save(article);
         Long articleId = article.getId();
         for(int i = 0; i < mealInfo.getMeals().length; i++){

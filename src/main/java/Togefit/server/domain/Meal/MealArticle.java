@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class MealArticle {
@@ -15,9 +16,11 @@ public class MealArticle {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String userId;
+    private Date date;
 
-    public MealArticle(String userId){
+    public MealArticle(String userId, Date date){
         this.userId = userId;
+        this.date = date;
     }
 
     public String getUserId() {
@@ -34,5 +37,13 @@ public class MealArticle {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
     }
 }
