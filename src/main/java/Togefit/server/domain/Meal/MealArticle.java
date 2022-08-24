@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class MealArticle {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long mealGroupId;
+    private Long id;
     private String userId;
 
     public MealArticle(String userId){
@@ -24,11 +24,11 @@ public class MealArticle {
         this.userId = userId;
     }
 
-    public Long getMealGroupId() {
-        return mealGroupId;
+    public Long getId() {
+        return id;
     }
 
-    public void setMealGroupId(Long mealGroupId) {
-        this.mealGroupId = mealGroupId;
+    public void setId(Long id) {
+        this.id = id;
     }
 }

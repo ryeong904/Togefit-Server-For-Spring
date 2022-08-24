@@ -1,12 +1,10 @@
 package Togefit.server.controller;
 
+import Togefit.server.model.IdInfo;
 import Togefit.server.model.MealInfo;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.service.MealService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -27,6 +25,14 @@ public class MealController {
         mealService.saveMeal(mealInfo, userId);
 
         resp.setResult("등록되었습니다.");
+        return resp;
+    }
+
+    @DeleteMapping("/")
+    public OperationResponse delete(@RequestBody IdInfo idInfo, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        mealService.deleteMeal(idInfo.getId());
+        resp.setResult("삭제되었습니다.");
         return resp;
     }
 }
