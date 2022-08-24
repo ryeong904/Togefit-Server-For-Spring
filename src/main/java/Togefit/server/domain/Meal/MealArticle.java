@@ -7,6 +7,10 @@ import javax.persistence.Id;
 
 @Entity
 public class MealArticle {
+
+    public MealArticle(){
+
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

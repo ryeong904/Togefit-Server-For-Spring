@@ -10,6 +10,9 @@ import Togefit.server.repository.Meal.MealRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.List;
+
 @Service
 public class MealService {
     private final MealRepository mealRepository;
@@ -40,8 +43,20 @@ public class MealService {
     }
 
     @Transactional
-    public void deleteMeal(Long mealId){
-        mealArticleRepository.deleteById(mealId);
-//        mealRepository.deleteByMealGroupId(mealId);
+    public void deleteMeal(Long articleId){
+        // mealArticle -> meal -> mealArray 순서로 삭제
+
+        mealArticleRepository.deleteById(articleId);
+
+        List<Meal> findMeal = mealRepository.findByArticleId(articleId);
+        HashSet<Long> set = new HashSet<>();
+        for(Meal m : findMeal){
+            set.add(m.getMealGroupId());
+        }
+        mealRepository.deleteByArticleId(articleId);
+
+        for(Long l : set){
+            mealArrayRepository.deleteById(l);
+        }
     }
 }

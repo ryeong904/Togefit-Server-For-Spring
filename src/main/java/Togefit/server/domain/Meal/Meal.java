@@ -8,6 +8,10 @@ import javax.persistence.Id;
 @Entity
 public class Meal {
 
+    public Meal(){
+        
+    }
+
     public Meal(Long mealGroupId, String foodName, Integer quantity, Long articleId){
         this.mealGroupId = mealGroupId;
         this.foodName = foodName;
