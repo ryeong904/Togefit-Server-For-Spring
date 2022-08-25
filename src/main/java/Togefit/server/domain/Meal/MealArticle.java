@@ -1,10 +1,7 @@
 package Togefit.server.domain.Meal;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.Date;
+import javax.persistence.*;
+import java.util.Calendar;
 
 @Entity
 public class MealArticle {
@@ -16,11 +13,12 @@ public class MealArticle {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String userId;
-    private Date date;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar createdAt;
 
-    public MealArticle(String userId, Date date){
+    public MealArticle(String userId, Calendar createdAt){
         this.userId = userId;
-        this.date = date;
+        this.createdAt = createdAt;
     }
 
     public String getUserId() {
@@ -39,11 +37,11 @@ public class MealArticle {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Calendar getCreatedAt() {
+        return createdAt;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setCreatedAt(Calendar createdAt) {
+        this.createdAt = createdAt;
     }
 }

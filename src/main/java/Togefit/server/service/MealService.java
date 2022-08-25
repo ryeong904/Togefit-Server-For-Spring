@@ -10,10 +10,12 @@ import Togefit.server.model.meal.Meals;
 import Togefit.server.repository.Meal.MealArrayRepository;
 import Togefit.server.repository.Meal.MealArticleRepository;
 import Togefit.server.repository.Meal.MealRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.List;
 
 @Service
 public class MealService {
@@ -28,7 +30,7 @@ public class MealService {
     }
 
     public void saveMeal(Meals mealInfo, String userId){
-        MealArticle article = new MealArticle(userId, new Date());
+        MealArticle article = new MealArticle(userId, Calendar.getInstance());
         mealArticleRepository.save(article);
         Long articleId = article.getId();
         for(int i = 0; i < mealInfo.getMeals().length; i++){
@@ -100,6 +102,20 @@ public class MealService {
 
     public Object[] getAllMeals(){
         List<MealArticle> articles = mealArticleRepository.findAll();
+        Object[] obj = new Object[articles.size()];
+        for(int i = 0 ; i < articles.size(); i++){
+            obj[i] = this.getMealArticle(articles.get(i).getId());
+        }
+        return obj;
+    }
+
+    public Object[] getPagenation(String userId, int limit, int reqNumber, int year, int month){
+        PageRequest pageRequest = PageRequest.of(reqNumber, limit);
+
+        List<MealArticle> articles =
+                mealArticleRepository.findByUserIdAndDate(userId, year, month, pageRequest);
+
+
         Object[] obj = new Object[articles.size()];
         for(int i = 0 ; i < articles.size(); i++){
             obj[i] = this.getMealArticle(articles.get(i).getId());

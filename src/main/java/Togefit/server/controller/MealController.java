@@ -49,4 +49,15 @@ public class MealController {
     public Object[] getAll(){
         return mealService.getAllMeals();
     }
+
+    @GetMapping("/")
+    public Object[] getPagenation(
+            @RequestParam("userId") String userId,
+            @RequestParam("limit") int limit,
+            @RequestParam("reqNumber") int reqNumber,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month
+    ){
+        return mealService.getPagenation(userId, limit, reqNumber, year, month);
+    }
 }
