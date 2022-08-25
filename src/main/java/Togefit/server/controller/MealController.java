@@ -33,7 +33,8 @@ public class MealController {
     @DeleteMapping("/")
     public OperationResponse delete(@RequestBody IdInfo idInfo, HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
-        mealService.deleteMeal(idInfo.getId());
+        String userId = (String) request.getAttribute("userId");
+        mealService.deleteMeal(idInfo.getId(), userId);
         resp.setResult("삭제되었습니다.");
         return resp;
     }
@@ -73,20 +74,22 @@ public class MealController {
     }
 
     @PatchMapping("/one")
-    public OperationResponse updateOne(@RequestBody MealOne meal){
+    public OperationResponse updateOne(@RequestBody MealOne meal, HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
 
-        mealService.updateMealOne(meal);
+        mealService.updateMealOne(meal, userId);
 
         resp.setResult("수정되었습니다.");
         return resp;
     }
 
     @DeleteMapping("/one")
-    public OperationResponse deleteOne(@RequestBody MealOne meal){
+    public OperationResponse deleteOne(@RequestBody MealOne meal, HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
 
-        mealService.deleteMealOne(meal.getMealListId());
+        mealService.deleteMealOne(meal.getMealListId(), userId);
         resp.setResult("삭제되었습니다.");
         return resp;
     }
