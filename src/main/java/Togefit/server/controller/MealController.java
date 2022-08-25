@@ -2,6 +2,7 @@ package Togefit.server.controller;
 
 import Togefit.server.model.IdInfo;
 import Togefit.server.model.meal.MealInfoByArticleId;
+import Togefit.server.model.meal.MealOne;
 import Togefit.server.model.meal.Meals;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.service.MealService;
@@ -59,5 +60,15 @@ public class MealController {
             @RequestParam("month") int month
     ){
         return mealService.getPagenation(userId, limit, reqNumber, year, month);
+    }
+
+    @PostMapping("/one")
+    public OperationResponse registerOne(@RequestBody MealOne meal, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+        mealService.saveMealOne(meal, userId);
+
+        resp.setResult("등록되었습니다.");
+        return resp;
     }
 }

@@ -3,10 +3,7 @@ package Togefit.server.service;
 import Togefit.server.domain.Meal.Meal;
 import Togefit.server.domain.Meal.MealArray;
 import Togefit.server.domain.Meal.MealArticle;
-import Togefit.server.model.meal.MealInfo;
-import Togefit.server.model.meal.MealInfoByArticleId;
-import Togefit.server.model.meal.MealList;
-import Togefit.server.model.meal.Meals;
+import Togefit.server.model.meal.*;
 import Togefit.server.repository.Meal.MealArrayRepository;
 import Togefit.server.repository.Meal.MealArticleRepository;
 import Togefit.server.repository.Meal.MealRepository;
@@ -125,5 +122,24 @@ public class MealService {
 
     private Optional<MealArticle> findOne(Long articleId){
         return mealArticleRepository.findById(articleId);
+    }
+
+    public void saveMealOne(MealOne meal, String userId){
+        // mealArray에 저장 -> 생성된 id(mealGroupId)와 articleID로 meal에 저장
+        Long mealArticleId = meal.getMealArticleId();
+        MealArray mealArray = new MealArray();
+        mealArrayRepository.save(mealArray);
+
+        Long mealGroupId = mealArray.getMealGroupId();
+
+        for(int i = 0 ; i < meal.getMeals().length; i++){
+            Meal one = new Meal(
+                    mealGroupId,
+                    meal.getMeals()[i].getFoodName(),
+                    meal.getMeals()[i].getQuantity(),
+                    mealArticleId
+            );
+            mealRepository.save(one);
+        }
     }
 }
