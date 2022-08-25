@@ -73,13 +73,21 @@ public class MealController {
     }
 
     @PatchMapping("/one")
-    public OperationResponse updateOne(@RequestBody MealOne meal, HttpServletRequest request){
+    public OperationResponse updateOne(@RequestBody MealOne meal){
         OperationResponse resp = new OperationResponse();
-        String userId = (String) request.getAttribute("userId");
 
-        mealService.updateMealOne(meal, userId);
+        mealService.updateMealOne(meal);
 
         resp.setResult("수정되었습니다.");
+        return resp;
+    }
+
+    @DeleteMapping("/one")
+    public OperationResponse deleteOne(@RequestBody MealOne meal){
+        OperationResponse resp = new OperationResponse();
+
+        mealService.deleteMealOne(meal.getMealListId());
+        resp.setResult("삭제되었습니다.");
         return resp;
     }
 }

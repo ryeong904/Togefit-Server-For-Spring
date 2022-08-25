@@ -149,7 +149,7 @@ public class MealService {
     }
 
     @Transactional
-    public void updateMealOne(MealOne meal, String userId){
+    public void updateMealOne(MealOne meal){
         Long mealGroupId = meal.getMealListId();
 
         List<Meal> meals = mealRepository.findByMealGroupId(mealGroupId);
@@ -158,5 +158,11 @@ public class MealService {
         mealRepository.deleteByMealGroupId(mealGroupId);
 
         saveMeals(meal.getMeals(), mealGroupId, mealArticleId);
+    }
+
+    @Transactional
+    public void deleteMealOne(Long id){
+        mealRepository.deleteByMealGroupId(id);
+        mealArrayRepository.deleteById(id);
     }
 }
