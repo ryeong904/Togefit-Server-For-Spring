@@ -78,21 +78,22 @@ public class MealService {
 
         MealList[] mealList = new MealList[set.size()];
 
-        for(int i=0; i<mealList.length; i++){
-            for(Long l : set){
-                List<Meal> list = mealRepository.findByMealGroupId(l);
-                MealList newMealList = new MealList();
-                newMealList.setMeal_list(new MealInfo[list.size()]);
+        int i = 0;
+        for(Long l : set){
+            List<Meal> list = mealRepository.findByMealGroupId(l);
+            MealList newMealList = new MealList();
+            newMealList.setMeal_list(new MealInfo[list.size()]);
 
-                int index = 0;
-                for(Meal m : list){
-                    MealInfo meal = new MealInfo(m.getFoodName(), m.getQuantity());
-                    newMealList.getMeal_list()[index] = meal;
-                    index += 1;
-                }
-                mealList[i] = newMealList;
+            int index = 0;
+            for(Meal m : list){
+                MealInfo meal = new MealInfo(m.getFoodName(), m.getQuantity());
+                newMealList.getMeal_list()[index] = meal;
+                index += 1;
             }
+            mealList[i] = newMealList;
+            i ++;
         }
+
         article.setMeals(mealList);
         return article;
     }
