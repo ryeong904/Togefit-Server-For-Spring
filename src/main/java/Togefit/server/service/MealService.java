@@ -132,14 +132,30 @@ public class MealService {
 
         Long mealGroupId = mealArray.getMealGroupId();
 
-        for(int i = 0 ; i < meal.getMeals().length; i++){
+        saveMeals(meal.getMeals(), mealGroupId, mealArticleId);
+    }
+
+    public void saveMeals(MealInfo[] meal, Long mealGroupId, Long mealArticleId){
+        for(int i = 0 ; i < meal.length; i++){
             Meal one = new Meal(
                     mealGroupId,
-                    meal.getMeals()[i].getFoodName(),
-                    meal.getMeals()[i].getQuantity(),
+                    meal[i].getFoodName(),
+                    meal[i].getQuantity(),
                     mealArticleId
             );
             mealRepository.save(one);
         }
+    }
+
+    @Transactional
+    public void updateMealOne(MealOne meal, String userId){
+        Long mealGroupId = meal.getMealListId();
+
+        List<Meal> meals = mealRepository.findByMealGroupId(mealGroupId);
+        Long mealArticleId = meals.get(0).getArticleId();
+
+        mealRepository.deleteByMealGroupId(mealGroupId);
+
+        saveMeals(meal.getMeals(), mealGroupId, mealArticleId);
     }
 }

@@ -10,4 +10,5 @@ public interface MealRepository extends JpaRepository<Meal, Long> {
     void deleteByArticleId(Long articleId);
     List<Meal> findByArticleId(Long articleId);
     List<Meal> findByMealGroupId(Long mealGroupId);
+    void deleteByMealGroupId(Long groupId);
 }

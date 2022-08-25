@@ -2,7 +2,17 @@ package Togefit.server.model.meal;
 
 public class MealOne {
     private Long mealArticleId;
+    private Long mealListId;
     private MealInfo[] meals;
+
+    public Long getMealArticleId() {
+        return mealArticleId;
+    }
+
+    public void setMealArticleId(Long mealArticleId) {
+        this.mealArticleId = mealArticleId;
+    }
+
 
     public MealInfo[] getMeals() {
         return meals;
@@ -12,11 +22,11 @@ public class MealOne {
         this.meals = meals;
     }
 
-    public Long getMealArticleId() {
-        return mealArticleId;
+    public Long getMealListId() {
+        return mealListId;
     }
 
-    public void setMealArticleId(Long mealArticleId) {
-        this.mealArticleId = mealArticleId;
+    public void setMealListId(Long mealListId) {
+        this.mealListId = mealListId;
     }
 }

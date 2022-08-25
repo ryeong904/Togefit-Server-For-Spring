@@ -71,4 +71,15 @@ public class MealController {
         resp.setResult("등록되었습니다.");
         return resp;
     }
+
+    @PatchMapping("/one")
+    public OperationResponse updateOne(@RequestBody MealOne meal, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        mealService.updateMealOne(meal, userId);
+
+        resp.setResult("수정되었습니다.");
+        return resp;
+    }
 }
