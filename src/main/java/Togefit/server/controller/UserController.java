@@ -1,18 +1,21 @@
 package Togefit.server.controller;
 
-import Togefit.server.domain.User;
+import Togefit.server.domain.User.User;
 import Togefit.server.model.UserInfo;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.response.UserLoginResponse;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
+import Togefit.server.service.AwsS3Service;
 import Togefit.server.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Optional;
 
 @RequestMapping("/users")
@@ -20,10 +23,12 @@ import java.util.Optional;
 public class UserController {
 
     final private UserService userService;
+    final private AwsS3Service awsS3Service;
 
     @Autowired
-    public UserController(UserService userService){
+    public UserController(UserService userService, AwsS3Service awsS3Service){
         this.userService = userService;
+        this.awsS3Service = awsS3Service;
     }
 
     @PostMapping("/")
@@ -73,15 +78,25 @@ public class UserController {
 
         userService.deleteUser(userId, password);
         deleteCookie(response);
+        //ToDo 1. 회원 탈퇴시 liked 테이블에서도 삭제
 
         resp.setResult("정상적으로 회원 탈퇴 되었습니다.");
         return resp;
     }
 
     @PatchMapping("/")
-    public OperationResponse userUpdate(@ModelAttribute User user, @RequestParam String currentPassword, HttpServletRequest request){
+    public OperationResponse userUpdate(
+            @ModelAttribute User user,
+            @RequestParam String currentPassword,
+            @RequestPart(value = "profile")MultipartFile multipartFile,
+            HttpServletRequest request) throws IOException {
         OperationResponse resp = new OperationResponse();
         String userId = (String) request.getAttribute("userId");
+
+        if(!multipartFile.isEmpty()){
+            user.setProfile_image(awsS3Service.uploadFile(multipartFile));
+        }
+
         user.setUserId(userId);
         userService.updateUser(user, currentPassword);
         resp.setResult("회원 정보가 정상적으로 수정되었습니다.");
@@ -93,5 +108,4 @@ public class UserController {
         cookie.setMaxAge(0);
         response.addCookie(cookie);
     }
-
 }

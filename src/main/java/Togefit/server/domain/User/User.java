@@ -1,5 +1,6 @@
-package Togefit.server.domain;
+package Togefit.server.domain.User;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
@@ -13,9 +14,7 @@ public class User {
     @Id
     private String userId;
     private String password;
-//    private String profile_image;
-//    private String[] liked;
-//    private String refresh_token;
+    private String profile_image;
 
     public String getName() {
         return name;
@@ -49,27 +48,11 @@ public class User {
         this.password = password;
     }
 
-//    public String getProfile_image() {
-//        return profile_image;
-//    }
-//
-//    public void setProfile_image(String profile_image) {
-//        this.profile_image = profile_image;
-//    }
-//
-//    public String[] getLiked() {
-//        return liked;
-//    }
-//
-//    public void setLiked(String[] liked) {
-//        this.liked = liked;
-//    }
-//
-//    public String getRefresh_token() {
-//        return refresh_token;
-//    }
-//
-//    public void setRefresh_token(String refresh_token) {
-//        this.refresh_token = refresh_token;
-//    }
+    public String getProfile_image() {
+        return profile_image;
+    }
+
+    public void setProfile_image(String profile_image) {
+        this.profile_image = profile_image;
+    }
 }

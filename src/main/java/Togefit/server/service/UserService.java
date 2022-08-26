@@ -1,6 +1,6 @@
 package Togefit.server.service;
 
-import Togefit.server.domain.User;
+import Togefit.server.domain.User.User;
 import Togefit.server.repository.JpaUserRepository;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
@@ -21,7 +21,7 @@ import java.util.Optional;
 @Transactional
 public class UserService {
     @Value("${JWT_SECRET_KEY}")
-    String JWT_SECRET_KEY;
+    private String JWT_SECRET_KEY;
 
     private final JpaUserRepository userRepository;
 
@@ -35,6 +35,9 @@ public class UserService {
         // user의 패스워드 변경해주기
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
+
+        //default 이미지 설정
+        user.setProfile_image("https://team-16-s3.s3.ap-northeast-2.amazonaws.com/user.png");
         userRepository.save(user);
         return user.getUserId();
     }
@@ -128,6 +131,7 @@ public class UserService {
         if(updateUser.getNickname() != null) {
             user.setNickname(updateUser.getNickname());
         }
+        if(updateUser.getProfile_image() != null) user.setProfile_image(updateUser.getProfile_image());
 
         return user;
     }
