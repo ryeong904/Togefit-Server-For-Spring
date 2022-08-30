@@ -88,4 +88,15 @@ public class PostController {
         return resp;
     }
 
+    @DeleteMapping("/comment")
+    public OperationResponse commentDelete(@RequestBody IdInfo idInfo,
+                                           HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        postService.deleteComment(userId, idInfo.getId());
+
+        resp.setResult("댓글이 삭제되었습니다.");
+        return resp;
+    }
 }

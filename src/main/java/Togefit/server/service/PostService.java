@@ -139,4 +139,18 @@ public class PostService {
         Comment comment = new Comment(postId, nickname, userId, content);
         commentRepository.save(comment);
     }
+
+    @Transactional
+    public void deleteComment(String userId, Long commentId){
+        Optional<Comment> findComment = commentRepository.findById(commentId);
+        if(findComment.isEmpty()){
+            throw new CustomException(new Error("해당 댓글을 찾지 못했습니다."));
+        }
+
+        if(!findComment.get().getUserId().equals(userId)){
+            throw new CustomException(new Error("작성자만 삭제할 수 있습니다."));
+        }
+
+        commentRepository.deleteById(commentId);
+    }
 }
