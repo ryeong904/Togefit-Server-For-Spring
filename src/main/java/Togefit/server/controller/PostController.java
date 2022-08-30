@@ -1,5 +1,6 @@
 package Togefit.server.controller;
 
+import Togefit.server.model.IdInfo;
 import Togefit.server.model.PostInfo;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.service.PostService;
@@ -41,6 +42,19 @@ public class PostController {
 
 
         resp.setResult("등록되었습니다.");
+        return resp;
+    }
+
+    @DeleteMapping
+    public OperationResponse delete(@RequestBody IdInfo IdInfo, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        Long postId = IdInfo.getId();
+
+        postService.deletePost(userId, postId);
+
+        resp.setResult("삭제되었습니다.");
         return resp;
     }
 

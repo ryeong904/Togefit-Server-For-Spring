@@ -8,6 +8,8 @@ import javax.persistence.Id;
 @Entity
 public class Tag {
 
+    public Tag(){}
+
     public Tag(Long postId, String tag){
         this.postId = postId;
         this.tag = tag;

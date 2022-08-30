@@ -10,6 +10,10 @@ import javax.persistence.Id;
 @Entity
 public class Post {
 
+    public Post(){
+
+    }
+
     public Post(String userId, String nickname, String contents, boolean is_open,
                 Long meal, Long routine){
         this.userId = userId;

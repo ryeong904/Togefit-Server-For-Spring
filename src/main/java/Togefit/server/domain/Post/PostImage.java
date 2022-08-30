@@ -8,6 +8,10 @@ import javax.persistence.Id;
 @Entity
 public class PostImage {
 
+    public PostImage(){
+
+    }
+
     public PostImage(Long postId, String imageUrl){
         this.postId = postId;
         this.imageUrl = imageUrl;
