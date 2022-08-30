@@ -16,6 +16,7 @@ public class InterceptorConfigure implements WebMvcConfigurer {
         registry.addInterceptor(loginRequiredInterceptor)
                 .addPathPatterns("/users/")
                 .addPathPatterns("/routines/**")
-                .addPathPatterns("/meals/**");
+                .addPathPatterns("/meals/**")
+                .addPathPatterns("/posts/**");
     }
 }

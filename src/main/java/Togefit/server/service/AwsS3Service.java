@@ -12,6 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AwsS3Service {
@@ -46,6 +48,15 @@ public class AwsS3Service {
         }
 
         return amazonS3Client.getUrl(bucketName, fileName).toString();
+    }
+
+    public List<String> multipleUploadFile(List<MultipartFile> multipartFiles) throws IOException {
+        List<String> fileUrls = new ArrayList<>();
+
+        for(MultipartFile multipartFile : multipartFiles){
+            fileUrls.add(this.uploadFile(multipartFile));
+        }
+        return fileUrls;
     }
 
     private String buildFileName(String originalFileName){

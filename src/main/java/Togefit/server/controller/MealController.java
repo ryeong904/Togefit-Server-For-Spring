@@ -43,7 +43,6 @@ public class MealController {
     @GetMapping("/{articleId}")
     public MealInfoByArticleId get(@PathVariable Long articleId){
         MealInfoByArticleId article = new MealInfoByArticleId();
-        System.out.println(articleId);
         return mealService.getMealArticle(articleId);
     }
 
