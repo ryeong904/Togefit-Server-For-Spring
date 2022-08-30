@@ -1,4 +1,4 @@
-package Togefit.server.model;
+package Togefit.server.model.Post;
 
 public class PostInfo {
 

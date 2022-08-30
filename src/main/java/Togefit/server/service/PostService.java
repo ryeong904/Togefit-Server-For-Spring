@@ -1,9 +1,12 @@
 package Togefit.server.service;
 
+import Togefit.server.domain.Post.Comment;
 import Togefit.server.domain.Post.Post;
 import Togefit.server.domain.Post.PostImage;
 import Togefit.server.domain.Post.Tag;
-import Togefit.server.model.PostInfo;
+import Togefit.server.model.Post.CommentInfo;
+import Togefit.server.model.Post.PostInfo;
+import Togefit.server.repository.Post.CommentRepository;
 import Togefit.server.repository.Post.PostImageRepository;
 import Togefit.server.repository.Post.PostRepository;
 import Togefit.server.repository.Post.TagRepository;
@@ -22,12 +25,14 @@ public class PostService {
     private final PostRepository postRepository;
     private final TagRepository tagRepository;
     private final PostImageRepository postImageRepository;
+    private final CommentRepository commentRepository;
     private final AwsS3Service awsS3Service;
 
-    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, AwsS3Service awsS3Service) {
+    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, CommentRepository commentRepository, AwsS3Service awsS3Service) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
         this.postImageRepository = postImageRepository;
+        this.commentRepository = commentRepository;
         this.awsS3Service = awsS3Service;
     }
 
@@ -119,7 +124,19 @@ public class PostService {
         }
         post.setIs_open(postInfo.getIs_open());
 
-
         return post;
+    }
+
+    public void addComment(CommentInfo commentInfo, String userId, String nickname){
+        Long postId = commentInfo.getPostId();
+        String content = commentInfo.getContent();
+
+        Optional<Post> findPost = postRepository.findById(postId);
+        if(findPost.isEmpty()){
+            throw new CustomException(new Error("해당 글을 찾지 못했습니다."));
+        }
+
+        Comment comment = new Comment(postId, nickname, userId, content);
+        commentRepository.save(comment);
     }
 }

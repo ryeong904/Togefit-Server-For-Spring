@@ -2,7 +2,8 @@ package Togefit.server.controller;
 
 import Togefit.server.domain.Post.Post;
 import Togefit.server.model.IdInfo;
-import Togefit.server.model.PostInfo;
+import Togefit.server.model.Post.CommentInfo;
+import Togefit.server.model.Post.PostInfo;
 import Togefit.server.response.OperationResponse;
 import Togefit.server.service.PostService;
 import org.springframework.web.bind.annotation.*;
@@ -71,6 +72,19 @@ public class PostController {
         postService.updatePost(postInfo, tag_list, postId, userId, multipartFiles);
 
         resp.setResult("수정되었습니다.");
+        return resp;
+    }
+
+    @PostMapping("/comment")
+    public OperationResponse commentRegister(@RequestBody CommentInfo commentInfo,
+                                             HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+        String nickname = (String) request.getAttribute("nickname");
+
+
+        postService.addComment(commentInfo, userId, nickname);
+        resp.setResult("댓글이 등록되었습니다.");
         return resp;
     }
 
