@@ -31,21 +31,18 @@ public class PostService {
         this.awsS3Service = awsS3Service;
     }
 
-    public void addPost(PostInfo post, String tag_list, List<MultipartFile> multipartFiles) throws IOException {
+    public void addPost(Post post, String tag_list, List<MultipartFile> multipartFiles) throws IOException {
         // post 저장 -> postId로 (not null) tag_list 저장 (콤마 기준으로 분리하기), (not null) multipartFile 저장..
 
-        Post newPost = new Post(post.getUserId(), post.getNickname(), post.getContents(),
-                post.isIs_open(), post.getMeal(),post.getRoutine());
+        postRepository.save(post);
 
-        postRepository.save(newPost);
-
-        Long postId = newPost.getId();
+        Long postId = post.getId();
 
         if(tag_list != null){
             saveTag(tag_list,postId);
         }
 
-        if(!multipartFiles.isEmpty()){
+        if(multipartFiles != null){
             saveImageFiles(postId, multipartFiles);
         }
     }
@@ -58,7 +55,7 @@ public class PostService {
         }
     }
 
-    private void saveImageFiles(Long postId, List<MultipartFile> multipartFiles) throws IOException {
+    public void saveImageFiles(Long postId, List<MultipartFile> multipartFiles) throws IOException {
         List<String> imageFiles = this.awsS3Service.multipleUploadFile(multipartFiles);
         for(String i : imageFiles){
             PostImage postImage = new PostImage(postId, i);
@@ -84,5 +81,45 @@ public class PostService {
         postRepository.delete(findPost.get());
         tagRepository.deleteByPostId(postId);
         postImageRepository.deleteByPostId(postId);
+    }
+
+    @Transactional
+    public void updatePost(PostInfo postInfo, String tag_list, Long postId, String userId, List<MultipartFile> multipartFiles) throws IOException {
+        Optional<Post> findPost = postRepository.findById(postId);
+        if(findPost.isEmpty()){
+            throw new CustomException(new Error("해당 글을 찾지 못했습니다."));
+        }
+
+        if(!findPost.get().getUserId().equals(userId)){
+            throw new CustomException(new Error(403, "작성자만 삭제할 수 있습니다."));
+        }
+
+        Post newPost = updatePost(findPost.get(), postInfo);
+        postRepository.save(newPost);
+
+        if(tag_list != null){
+            tagRepository.deleteByPostId(postId);
+            saveTag(tag_list, postId);
+        }
+
+        if(multipartFiles != null){
+            saveImageFiles(postId, multipartFiles);
+        }
+    }
+
+    private Post updatePost(Post post, PostInfo postInfo){
+        if(postInfo.getContents() != null){
+            post.setContents(postInfo.getContents());
+        }
+        if(postInfo.getMeal() != null){
+            post.setMeal(postInfo.getMeal());
+        }
+        if(postInfo.getRoutine() != null){
+            post.setRoutine(postInfo.getRoutine());
+        }
+        post.setIs_open(postInfo.getIs_open());
+
+
+        return post;
     }
 }

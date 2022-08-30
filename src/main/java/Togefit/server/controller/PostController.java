@@ -1,5 +1,6 @@
 package Togefit.server.controller;
 
+import Togefit.server.domain.Post.Post;
 import Togefit.server.model.IdInfo;
 import Togefit.server.model.PostInfo;
 import Togefit.server.response.OperationResponse;
@@ -15,7 +16,7 @@ import java.util.List;
 @RestController
 public class PostController {
 
-    private PostService postService;
+    private final PostService postService;
     public PostController(PostService postService) {
         this.postService = postService;
     }
@@ -36,7 +37,7 @@ public class PostController {
             is_open = true;
         }
 
-        PostInfo post = new PostInfo(userId, nickname, contents, is_open, meal, routine);
+        Post post = new Post(userId, nickname, contents, is_open, meal, routine);
 
         postService.addPost(post, tag_list, multipartFiles);
 
@@ -55,6 +56,21 @@ public class PostController {
         postService.deletePost(userId, postId);
 
         resp.setResult("삭제되었습니다.");
+        return resp;
+    }
+
+    @PatchMapping("/{postId}")
+    public OperationResponse update(@PathVariable Long postId,
+                                    @ModelAttribute PostInfo postInfo,
+                                    @RequestParam(required = false) String tag_list,
+                                    @RequestPart(required = false, value = "images") List<MultipartFile> multipartFiles,
+                                    HttpServletRequest request) throws IOException {
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        postService.updatePost(postInfo, tag_list, postId, userId, multipartFiles);
+
+        resp.setResult("수정되었습니다.");
         return resp;
     }
 

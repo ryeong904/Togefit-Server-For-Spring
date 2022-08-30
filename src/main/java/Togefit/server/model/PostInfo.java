@@ -3,36 +3,18 @@ package Togefit.server.model;
 public class PostInfo {
 
     public PostInfo(String userId, String nickname, String contents, boolean is_open, Long meal, Long routine){
-        this.userId = userId;
-        this.nickname = nickname;
+
         this.contents = contents;
         this.is_open = is_open;
         this.meal = meal;
         this.routine = routine;
     }
-    private String userId;
-    private String nickname;
+
     private String contents;
     private boolean is_open;
     private Long routine;
     private Long meal;
 
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getNickname() {
-        return nickname;
-    }
-
-    public void setNickname(String nickname) {
-        this.nickname = nickname;
-    }
 
     public String getContents() {
         return contents;
@@ -42,7 +24,7 @@ public class PostInfo {
         this.contents = contents;
     }
 
-    public boolean isIs_open() {
+    public boolean getIs_open() {
         return is_open;
     }
 

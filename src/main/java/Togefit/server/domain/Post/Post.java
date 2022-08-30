@@ -14,6 +14,14 @@ public class Post {
 
     }
 
+    public Post(String contents, boolean is_open,
+                Long meal, Long routine){
+        this.contents = contents;
+        this.is_open = is_open;
+        this.meal = meal;
+        this.routine = routine;
+    }
+
     public Post(String userId, String nickname, String contents, boolean is_open,
                 Long meal, Long routine){
         this.userId = userId;
