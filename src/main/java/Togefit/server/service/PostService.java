@@ -153,4 +153,18 @@ public class PostService {
 
         commentRepository.deleteById(commentId);
     }
+
+    public void updateComment(CommentInfo commentInfo, String userId){
+        Optional<Comment> findComment = commentRepository.findById(commentInfo.getCommentId());
+        if(findComment.isEmpty()){
+            throw new CustomException(new Error("해당 댓글을 찾지 못했습니다."));
+        }
+
+        if(!findComment.get().getUserId().equals(userId)){
+            throw new CustomException(new Error("작성자만 삭제할 수 있습니다."));
+        }
+
+        findComment.get().setContent(commentInfo.getContent());
+        commentRepository.save(findComment.get());
+    }
 }

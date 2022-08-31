@@ -1,5 +1,6 @@
 package Togefit.server.controller;
 
+import Togefit.server.domain.Post.Comment;
 import Togefit.server.domain.Post.Post;
 import Togefit.server.model.IdInfo;
 import Togefit.server.model.Post.CommentInfo;
@@ -89,14 +90,26 @@ public class PostController {
     }
 
     @DeleteMapping("/comment")
-    public OperationResponse commentDelete(@RequestBody IdInfo idInfo,
+    public OperationResponse commentDelete(@RequestBody CommentInfo commentInfo,
                                            HttpServletRequest request){
         OperationResponse resp = new OperationResponse();
         String userId = (String) request.getAttribute("userId");
 
-        postService.deleteComment(userId, idInfo.getId());
+        postService.deleteComment(userId, commentInfo.getCommentId());
 
         resp.setResult("댓글이 삭제되었습니다.");
+        return resp;
+    }
+
+    @PatchMapping("/comment")
+    public OperationResponse commentUpdate(@RequestBody CommentInfo commentInfo,
+                                           HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        String userId = (String) request.getAttribute("userId");
+
+        postService.updateComment(commentInfo, userId);
+
+        resp.setResult("댓글이 수정되었습니다.");
         return resp;
     }
 }
