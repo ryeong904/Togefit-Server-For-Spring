@@ -181,4 +181,16 @@ public class RoutineService {
             saveRoutineInfo(updateRoutineInfo.getId(), updateRoutineInfo.getRoutine_list());
         }
     }
+
+    public RoutineListInfo getRoutineInfo(Long routineId){
+        RoutineListInfo routineListInfo = new RoutineListInfo();
+        Optional<RoutineList> routineList = routineListRepository.findById(routineId);
+        routineListInfo.setRoutineName(routineList.get().getRoutineName());
+
+        List<ExerciseInfo> exerciseInfoList = exerciseInfoRepository.findByRoutineListId(routineId);
+
+        ExerciseInfo[] temp = exerciseInfoList.toArray(new ExerciseInfo[exerciseInfoList.size()]);
+        routineListInfo.setRoutineList(temp);
+        return routineListInfo;
+    }
 }

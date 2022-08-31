@@ -3,7 +3,6 @@ package Togefit.server.model.Post;
 public class PostInfo {
 
     public PostInfo(String userId, String nickname, String contents, boolean is_open, Long meal, Long routine){
-
         this.contents = contents;
         this.is_open = is_open;
         this.meal = meal;

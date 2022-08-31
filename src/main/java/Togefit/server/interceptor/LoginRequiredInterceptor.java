@@ -20,19 +20,15 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
     String JWT_SECRET_KEY;
 
     private boolean checkUserHttpMethod(String method) {
-        if(method.equals("PATCH") || method.equals("DELETE")){
-            return true;
-        }else{
-            return false;
-        }
+        return (method.equals("PATCH") || method.equals("DELETE"));
     }
 
     private boolean checkMealHttpMethod(String method){
-        if(method.equals("GET")){
-            return true;
-        }else{
-            return false;
-        }
+        return method.equals("GET");
+    }
+
+    private boolean checkPostHttpMethod(String method){
+        return method.equals("GET");
     }
 
     @Override
@@ -42,13 +38,19 @@ public class LoginRequiredInterceptor implements HandlerInterceptor{
 
         String method = request.getMethod();
         if(uri.equals("/users/")){
-            if(checkUserHttpMethod(method) == false){
+            if(!checkUserHttpMethod(method)){
                 return true;
             }
         }
 
         if(uri.contains("/meals/")){
-            if(checkMealHttpMethod(method) == true){
+            if(checkMealHttpMethod(method)){
+                return true;
+            }
+        }
+
+        if(uri.contains("/posts/")){
+            if(checkPostHttpMethod(method)){
                 return true;
             }
         }

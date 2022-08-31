@@ -93,7 +93,7 @@ public class Post {
         this.contents = contents;
     }
 
-    public boolean isIs_open() {
+    public boolean getIs_open() {
         return is_open;
     }
 

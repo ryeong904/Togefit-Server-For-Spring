@@ -1,8 +1,8 @@
 package Togefit.server.controller;
 
-import Togefit.server.domain.Post.Comment;
 import Togefit.server.domain.Post.Post;
 import Togefit.server.model.IdInfo;
+import Togefit.server.model.Post.ArticleInfo;
 import Togefit.server.model.Post.CommentInfo;
 import Togefit.server.model.Post.PostInfo;
 import Togefit.server.response.OperationResponse;
@@ -111,5 +111,10 @@ public class PostController {
 
         resp.setResult("댓글이 수정되었습니다.");
         return resp;
+    }
+
+    @GetMapping("/{postId}")
+    public ArticleInfo getPost(@PathVariable Long postId){
+        return postService.getPostById(postId);
     }
 }

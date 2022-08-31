@@ -4,8 +4,11 @@ import Togefit.server.domain.Post.Comment;
 import Togefit.server.domain.Post.Post;
 import Togefit.server.domain.Post.PostImage;
 import Togefit.server.domain.Post.Tag;
+import Togefit.server.model.Post.ArticleInfo;
 import Togefit.server.model.Post.CommentInfo;
 import Togefit.server.model.Post.PostInfo;
+import Togefit.server.model.meal.MealInfo;
+import Togefit.server.model.meal.MealInfoByArticleId;
 import Togefit.server.repository.Post.CommentRepository;
 import Togefit.server.repository.Post.PostImageRepository;
 import Togefit.server.repository.Post.PostRepository;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,13 +31,17 @@ public class PostService {
     private final PostImageRepository postImageRepository;
     private final CommentRepository commentRepository;
     private final AwsS3Service awsS3Service;
+    private final MealService mealService;
+    private final RoutineService routineService;
 
-    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, CommentRepository commentRepository, AwsS3Service awsS3Service) {
+    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, CommentRepository commentRepository, AwsS3Service awsS3Service, MealService mealService, RoutineService routineService) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
         this.postImageRepository = postImageRepository;
         this.commentRepository = commentRepository;
         this.awsS3Service = awsS3Service;
+        this.mealService = mealService;
+        this.routineService = routineService;
     }
 
     public void addPost(Post post, String tag_list, List<MultipartFile> multipartFiles) throws IOException {
@@ -166,5 +174,71 @@ public class PostService {
 
         findComment.get().setContent(commentInfo.getContent());
         commentRepository.save(findComment.get());
+    }
+
+    public ArticleInfo getPostById(Long postId){
+        Optional<Post> findPost = postRepository.findById(postId);
+        if(findPost.isEmpty()){
+            throw new CustomException(new Error("해당 글을 찾지 못했습니다."));
+        }
+        return this.setArticle(findPost.get(), postId, findPost.get().getMeal(), findPost.get().getRoutine());
+    }
+
+    private ArticleInfo setArticle(Post post, Long postId, Long mealId, Long routineId){
+        ArticleInfo article =
+                new ArticleInfo(
+                        post.getUserId(),
+                        post.getNickname(),
+                        post.getContents(),
+                        post.getIs_open(),
+                        post.getLikeCount()
+                );
+
+        article.setPost_image(this.getPostImageUrl(postId));
+        article.setTag_list(this.getTagList(postId));
+
+        getMealInfo(mealId);
+        article.setMeal_info(this.getMealInfo(mealId));
+        article.setRoutine_info(routineService.getRoutineInfo(routineId));
+        article.setComments(this.getCommentList(postId));
+        return article;
+    }
+
+    private String[] getPostImageUrl(Long postId){
+        List<PostImage> images = postImageRepository.findByPostId(postId);
+        String[] result = new String[images.size()];
+
+        for(int i = 0; i < images.size(); i++){
+            result[i] = images.get(i).getImageUrl();
+        }
+
+        return result;
+    }
+
+    private String[] getTagList(Long postId){
+        List<Tag> tags = tagRepository.findByPostId(postId);
+        String[] result = new String[tags.size()];
+
+        for(int i = 0 ; i < tags.size(); i++){
+            result[i] = tags.get(i).getTag();
+        }
+
+        return result;
+    }
+
+    private List<MealInfo[]> getMealInfo(Long mealId){
+        MealInfoByArticleId mealArticle = mealService.getMealArticle(mealId);
+        List<MealInfo[]> result = new ArrayList<>();
+
+        for(int i = 0 ; i < mealArticle.getMeals().length; i++){
+            MealInfo[] meal_list = mealArticle.getMeals()[i].getMeal_list();
+            result.add(meal_list);
+        }
+
+        return result;
+    }
+
+    private List<Comment> getCommentList(Long postId){
+        return commentRepository.findByPostId(postId);
     }
 }
