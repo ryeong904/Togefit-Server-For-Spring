@@ -117,4 +117,10 @@ public class PostController {
     public ArticleInfo getPost(@PathVariable Long postId){
         return postService.getPostById(postId);
     }
+
+    @GetMapping("/all")
+    public List<ArticleInfo> getAllPosts(@RequestParam("limit") int limit,
+                                @RequestParam("reqNumber") int reqNumber){
+        return postService.getAllPost(limit, reqNumber);
+    }
 }

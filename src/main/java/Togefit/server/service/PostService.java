@@ -15,6 +15,9 @@ import Togefit.server.repository.Post.PostRepository;
 import Togefit.server.repository.Post.TagRepository;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -240,5 +243,15 @@ public class PostService {
 
     private List<Comment> getCommentList(Long postId){
         return commentRepository.findByPostId(postId);
+    }
+
+    public List<ArticleInfo> getAllPost(int limit, int reqNumber){
+        List<ArticleInfo> result = new ArrayList<>();
+        Pageable pagealbe = PageRequest.of(reqNumber, limit);
+        Page<Post> posts = postRepository.findAll(pagealbe);
+        for(Post p : posts){
+            result.add(this.setArticle(p, p.getId(), p.getMeal(), p.getRoutine()));
+        }
+        return result;
     }
 }
