@@ -123,4 +123,15 @@ public class PostController {
                                 @RequestParam("reqNumber") int reqNumber){
         return postService.getAllPost(limit, reqNumber);
     }
+
+    @GetMapping("/user")
+    public List<ArticleInfo> getPostListByDate(@RequestParam("userId") String userId,
+                                                    @RequestParam("year") int year,
+                                                    @RequestParam("month") int month,
+                                                    @RequestParam("limit") int limit,
+                                                    @RequestParam("reqNumber") int reqNumber){
+        return postService.getPostListByDate(userId, year, month, limit, reqNumber);
+
+    }
+
 }

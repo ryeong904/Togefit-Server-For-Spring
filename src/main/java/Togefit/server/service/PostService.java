@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,6 +51,7 @@ public class PostService {
     public void addPost(Post post, String tag_list, List<MultipartFile> multipartFiles) throws IOException {
         // post 저장 -> postId로 (not null) tag_list 저장 (콤마 기준으로 분리하기), (not null) multipartFile 저장..
 
+        post.setCreatedAt(Calendar.getInstance());
         postRepository.save(post);
 
         Long postId = post.getId();
@@ -97,6 +99,7 @@ public class PostService {
         postRepository.delete(findPost.get());
         tagRepository.deleteByPostId(postId);
         postImageRepository.deleteByPostId(postId);
+        commentRepository.deleteByPostId(postId);
     }
 
     @Transactional
@@ -247,8 +250,19 @@ public class PostService {
 
     public List<ArticleInfo> getAllPost(int limit, int reqNumber){
         List<ArticleInfo> result = new ArrayList<>();
-        Pageable pagealbe = PageRequest.of(reqNumber, limit);
-        Page<Post> posts = postRepository.findAll(pagealbe);
+        Pageable pageable = PageRequest.of(reqNumber, limit);
+        Page<Post> posts = postRepository.findAll(pageable);
+        for(Post p : posts){
+            result.add(this.setArticle(p, p.getId(), p.getMeal(), p.getRoutine()));
+        }
+        return result;
+    }
+
+    public List<ArticleInfo> getPostListByDate(String userId, int year, int month, int limit, int reqNumber){
+        List<ArticleInfo> result = new ArrayList<>();
+        Pageable pageable = PageRequest.of(reqNumber, limit);
+
+        Page<Post> posts = postRepository.findByUserIdAndDate(userId, year, month, pageable);
         for(Post p : posts){
             result.add(this.setArticle(p, p.getId(), p.getMeal(), p.getRoutine()));
         }

@@ -2,10 +2,8 @@ package Togefit.server.domain.Post;
 
 import org.hibernate.annotations.ColumnDefault;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Calendar;
 
 @Entity
 public class Post {
@@ -44,6 +42,8 @@ public class Post {
     private int likeCount;
     private Long routine;
     private Long meal;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Calendar createdAt;
 
     public Long getRoutine() {
         return routine;
@@ -107,5 +107,13 @@ public class Post {
 
     public void setLikeCount(int likeCount) {
         this.likeCount = likeCount;
+    }
+
+    public Calendar getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Calendar createdAt) {
+        this.createdAt = createdAt;
     }
 }
