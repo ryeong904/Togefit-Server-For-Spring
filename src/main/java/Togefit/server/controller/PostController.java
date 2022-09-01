@@ -141,4 +141,23 @@ public class PostController {
         return postService.getPostByKeyword(tagName, limit, reqNumber);
     }
 
+    @PostMapping("/like")
+    public OperationResponse like(@RequestBody IdInfo idInfo, HttpServletRequest request){
+        OperationResponse resp = new OperationResponse();
+        resp.setResult("좋아요가 반영되었습니다.");
+        String userId = (String) request.getAttribute("userId");
+        Long postId = idInfo.getPostId();
+
+        boolean isExistPostId = postService.isExistPostId(postId, userId);
+
+        String mode = "plus";
+        if(isExistPostId){
+            mode = "minus";
+            resp.setResult("좋아요가 취소되었습니다.");
+        }
+
+        postService.updateLike(mode, postId, userId);
+        return resp;
+    }
+
 }

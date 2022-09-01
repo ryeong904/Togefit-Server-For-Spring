@@ -1,18 +1,12 @@
 package Togefit.server.service;
 
-import Togefit.server.domain.Post.Comment;
-import Togefit.server.domain.Post.Post;
-import Togefit.server.domain.Post.PostImage;
-import Togefit.server.domain.Post.Tag;
+import Togefit.server.domain.Post.*;
 import Togefit.server.model.Post.ArticleInfo;
 import Togefit.server.model.Post.CommentInfo;
 import Togefit.server.model.Post.PostInfo;
 import Togefit.server.model.meal.MealInfo;
 import Togefit.server.model.meal.MealInfoByArticleId;
-import Togefit.server.repository.Post.CommentRepository;
-import Togefit.server.repository.Post.PostImageRepository;
-import Togefit.server.repository.Post.PostRepository;
-import Togefit.server.repository.Post.TagRepository;
+import Togefit.server.repository.Post.*;
 import Togefit.server.response.error.CustomException;
 import Togefit.server.response.error.Error;
 import org.springframework.data.domain.Page;
@@ -31,15 +25,18 @@ public class PostService {
     private final TagRepository tagRepository;
     private final PostImageRepository postImageRepository;
     private final CommentRepository commentRepository;
+    private final LikedRepository likedRepository;
+
     private final AwsS3Service awsS3Service;
     private final MealService mealService;
     private final RoutineService routineService;
 
-    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, CommentRepository commentRepository, AwsS3Service awsS3Service, MealService mealService, RoutineService routineService) {
+    public PostService(PostRepository postRepository, TagRepository tagRepository, PostImageRepository postImageRepository, CommentRepository commentRepository, LikedRepository likedRepository, AwsS3Service awsS3Service, MealService mealService, RoutineService routineService) {
         this.postRepository = postRepository;
         this.tagRepository = tagRepository;
         this.postImageRepository = postImageRepository;
         this.commentRepository = commentRepository;
+        this.likedRepository = likedRepository;
         this.awsS3Service = awsS3Service;
         this.mealService = mealService;
         this.routineService = routineService;
@@ -288,5 +285,32 @@ public class PostService {
             }
         }
         return list;
+    }
+
+    public boolean isExistPostId(Long postId, String userId){
+        return likedRepository.findByPostIdAndUserId(postId, userId).isPresent();
+    }
+
+    public void updateLike(String mode, Long postId, String userId){
+        Optional<Post> findPost = postRepository.findById(postId);
+
+        if(findPost.isEmpty()){
+            throw new CustomException(new Error("해당 글을 찾지 못했습니다."));
+        }
+
+        int nextLikeNumber = findPost.get().getLikeCount();
+
+        Liked liked = new Liked(postId, userId);
+
+        if(mode.equals("plus")){
+            nextLikeNumber += 1;
+            likedRepository.save(liked);
+        }else{
+            nextLikeNumber -= 1;
+            likedRepository.delete(liked);
+        }
+
+        findPost.get().setLikeCount(nextLikeNumber);
+        postRepository.save(findPost.get());
     }
 }
