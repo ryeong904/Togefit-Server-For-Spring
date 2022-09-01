@@ -43,8 +43,6 @@ public class PostService {
     }
 
     public void addPost(Post post, String tag_list, List<MultipartFile> multipartFiles) throws IOException {
-        // post 저장 -> postId로 (not null) tag_list 저장 (콤마 기준으로 분리하기), (not null) multipartFile 저장..
-
         post.setCreatedAt(Calendar.getInstance());
         postRepository.save(post);
 
@@ -312,5 +310,16 @@ public class PostService {
 
         findPost.get().setLikeCount(nextLikeNumber);
         postRepository.save(findPost.get());
+    }
+
+    public int[] getDateList(String userId, int year, int month){
+        List<Post> posts = postRepository.findByUserIdAndDate(userId, year, month);
+        HashSet<Integer> set = new HashSet<>();
+        for(Post p : posts){
+            Calendar c = p.getCreatedAt();
+            set.add(c.get(Calendar.DATE));
+        }
+        int[] result = set.stream().mapToInt(Number::intValue).toArray();
+        return result;
     }
 }

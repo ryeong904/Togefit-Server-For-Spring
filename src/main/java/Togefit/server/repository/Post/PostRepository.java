@@ -14,6 +14,9 @@ public interface PostRepository extends JpaRepository<Post, Long>{
     @Query(value = "SELECT * FROM post WHERE user_id = :userId AND YEAR(created_at) = :year AND MONTH(created_at) = :month", nativeQuery = true)
     Page<Post> findByUserIdAndDate(String userId, int year, int month, Pageable pageable);
 
+    @Query(value = "SELECT * FROM post WHERE user_id = :userId AND YEAR(created_at) = :year AND MONTH(created_at) = :month", nativeQuery = true)
+    List<Post> findByUserIdAndDate(String userId, int year, int month);
+
     Page<Post> findByIdIn(List<Long> ids, Pageable pageable);
 }
 

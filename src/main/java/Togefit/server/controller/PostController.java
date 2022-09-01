@@ -166,4 +166,12 @@ public class PostController {
         return postService.isExistPostId(postId, userId);
     }
 
+    @GetMapping("/grass")
+    public int[] grass(@RequestParam("userId") String userId,
+                       @RequestParam("year") int year,
+                       @RequestParam("month") int month){
+
+        return postService.getDateList(userId, year, month);
+    }
+
 }
