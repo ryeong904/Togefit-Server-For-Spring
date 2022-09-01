@@ -160,4 +160,10 @@ public class PostController {
         return resp;
     }
 
+    @GetMapping("/liked")
+    public Boolean liked(@RequestParam("userId") String userId,
+                         @RequestParam("postId") Long postId){
+        return postService.isExistPostId(postId, userId);
+    }
+
 }
