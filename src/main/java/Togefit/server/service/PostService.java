@@ -23,10 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PostService {
@@ -267,5 +264,29 @@ public class PostService {
             result.add(this.setArticle(p, p.getId(), p.getMeal(), p.getRoutine()));
         }
         return result;
+    }
+
+    public List<ArticleInfo> getPostByKeyword(String tagName, int limit, int reqNumber){
+        List<ArticleInfo> result = new ArrayList<>();
+        Pageable pageable = PageRequest.of(reqNumber, limit);
+
+        List<Long> list = getPostIdByTag(tagRepository.findByTagContaining(tagName));
+
+        Page<Post> posts = postRepository.findByIdIn(list, pageable);
+
+        for(Post p : posts){
+            result.add(this.setArticle(p, p.getId(), p.getMeal(), p.getRoutine()));
+        }
+        return result;
+    }
+
+    private List<Long> getPostIdByTag(List<Tag> tagList){
+        List<Long> list = new ArrayList<>();
+        for(Tag t : tagList){
+            if(!list.contains(t.getPostId())){
+                list.add(t.getPostId());
+            }
+        }
+        return list;
     }
 }

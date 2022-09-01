@@ -134,4 +134,11 @@ public class PostController {
 
     }
 
+    @GetMapping("/search")
+    public List<ArticleInfo> search(@RequestParam("tagName") String tagName,
+                                    @RequestParam("limit") int limit,
+                                    @RequestParam("reqNumber") int reqNumber){
+        return postService.getPostByKeyword(tagName, limit, reqNumber);
+    }
+
 }
